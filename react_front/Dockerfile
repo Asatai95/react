@@ -1,0 +1,4 @@
+FROM node:8
+
+ENV WORKSPACE_DIR /var/www/react
+WORKDIR ${WORKSPACE_DIR}

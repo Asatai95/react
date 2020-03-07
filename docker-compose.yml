@@ -1,0 +1,68 @@
+version: '3.4'
+
+# volumes:
+#   mysite.db.volume:
+#     name: mysite.db.volume
+
+services:
+  mysql:
+    build: ./mysql/
+    image: mysql:5.7
+    container_name: react_db
+    restart: always
+    ports:
+      - 3306:3306
+    tty: true
+    environment:
+      MYSQL_ROOT_PASSWORD: test1156
+      MYSQL_PASSWORD: test1156
+      MYSQL_DATABASE: react_sample
+      TZ: 'Asia/Tokyo'
+    networks:
+      - app-net
+  react:
+    build: ./react_front/
+    container_name: react_front
+    restart: always
+    volumes:
+      - ./web:/var/www/react/
+    ports:
+      - "3000:3000"
+    tty: true
+    networks:
+      - app-net
+  web:
+    build: ./web/
+    image: ubuntu:16.04
+    container_name: react_app
+    restart: always
+    # command: python3 manage.py migrate
+    volumes:
+      - ./web:/var/www/react/
+      - ~/Desktop/react/nginx:/etc/nginx
+      - ~/Desktop/react/nginx/conf:/etc/nginx/conf.d
+      - ~/Desktop/react/nginx/uwsgi_params:/etc/nginx/uwsgi_params
+    ports:
+      - "3031:80"
+    tty: true
+    environment:
+      MYSQL_ROOT_PASSWORD: react1156
+      MYSQL_PASSWORD: react1156
+      MYSQL_DATABASE: react_sample
+    expose:
+      - "8000"
+      - "80"
+      - "3306"
+      - "3000"
+    links:
+      - mysql
+      - react
+    depends_on:
+      - mysql
+      - react
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge

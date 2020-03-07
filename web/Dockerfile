@@ -1,0 +1,81 @@
+FROM ubuntu:16.04
+
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONIOENCODING utf-8
+
+ENV HOME /root
+ENV DEPLOY_DIR ${HOME}/app
+
+ENV WORKSPACE_DIR /var/www/react
+
+RUN apt-get update
+
+# Set locale
+# https://stackoverflow.com/a/28406007
+RUN apt-get install -y locales
+RUN sed -i -e "s/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/" /etc/locale.gen \
+    && locale-gen
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+RUN apt-get install -y wget \
+    build-essential \
+    zlib1g-dev \
+    libssl-dev \
+    libsqlite3-dev
+
+WORKDIR ${HOME}
+RUN wget https://www.python.org/ftp/python/3.6.6/Python-3.6.6.tgz \
+    && tar zxf Python-3.6.6.tgz \
+    && cd Python-3.6.6 \
+    && ./configure --enable-optimizations \
+    && make altinstall
+
+RUN update-alternatives --install /usr/local/bin/python3 python3 /usr/local/bin/python3.6 1
+RUN update-alternatives --install /usr/local/bin/pip3 pip3 /usr/local/bin/pip3.6 1
+RUN pip3 install -U pip
+
+RUN apt-get install -y vim
+RUN apt-get install -y libmysqlclient-dev
+RUN mkdir -p ${DEPLOY_DIR}
+RUN mkdir -p ${WORKSPACE_DIR}
+
+ARG project_dir=/var/www/react/
+WORKDIR ${WORKSPACE_DIR}
+
+ADD requirements.txt $project_dir
+WORKDIR $project_dir
+RUN wget https://twistedmatrix.com/Releases/Twisted/18.9/Twisted-18.9.0.tar.bz2 \
+    && tar -jxvf Twisted-18.9.0.tar.bz2 \
+    && cd Twisted-18.9.0 \
+    && python3 setup.py install \
+    && cd ./.. \
+    && pip3 install -r requirements.txt
+
+RUN echo "mysql-server mysql-server/root_password password react1156" | debconf-set-selections && \
+    echo "mysql-server mysql-server/root_password_again password react1156" | debconf-set-selections && \
+    apt-get -y install mysql-server
+
+RUN apt-get install libmysqlclient-dev \
+    && pip3 install mysqlclient
+
+RUN apt-get update && \
+    apt-get install -y -q nginx && \
+    rm -Rf /etc/nginx/sites-enabled/default && \
+    rm -rf /var/lib/apt/lists/*
+RUN nginx
+
+# WORKDIR ${WORKSPACE_DIR}
+# RUN python3 manage.py migrate
+# RUN sudo apt-get install redis-server \
+#     && redis-server
+
+EXPOSE 80
+EXPOSE 443
+EXPOSE 3031
+EXPOSE 3306
+EXPOSE 3000
+
+CMD ["/bin/bash"]
+
