@@ -14,8 +14,8 @@ services:
       - 3306:3306
     tty: true
     environment:
-      MYSQL_ROOT_PASSWORD: test1156
-      MYSQL_PASSWORD: test1156
+      MYSQL_ROOT_PASSWORD: react1156
+      MYSQL_PASSWORD: react1156
       MYSQL_DATABASE: react_sample
       TZ: 'Asia/Tokyo'
     networks:

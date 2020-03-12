@@ -1,24 +1,33 @@
+from config import *
 
 import os
+import sys
+
+from django import *
+from django.contrib.messages import *
+from django.contrib import *
+
+from django.db import models
+
+from django.db.backends.mysql.base import DatabaseWrapper
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-print("BASE_DIR")
-print(BASE_DIR)
 
 SECRET_KEY = 'sjob9ux92^0zve)awaz@z3j-^!ijr^11blvvdgsup47ui-(uht'
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app'
+    'app.apps.WebappConfig',
+    'app.templatetags',
 ]
 
 MIDDLEWARE = [
