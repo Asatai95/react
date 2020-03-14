@@ -36,8 +36,12 @@ from django.db.models import Q, Count, Max, Min
 from .models import (
     Todo,
 )
-from rest_framework import generics
+
+# rest_framework
+from rest_framework import routers, viewsets, generics
+from rest_framework.response import Response
 from .serializers import TodoSerializer
+
 from django.contrib.sessions.models import Session
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
@@ -81,7 +85,12 @@ class Test(generic.ListView):
     def get(self, request, *args, **kwargs):
         return render(self.request, self.template_name)
 
-class TestAPI(generics.ListAPIView):
+class TestAPI(viewsets.ModelViewSet):
 
-    test = Todo.objects.all()
+    queryset = Todo.objects.all()
     serializer_class = TodoSerializer
+
+    # def list(self, request):
+    #     queryset = self.get_queryset()
+    #     serializer = TodoSerializer(queryset, many=True)
+    #     return Response(serializer.data)

@@ -28,13 +28,12 @@ class UserManager(BaseUserManager):
     use_in_migrations = True
 
     def _create_user(self, username, email, password, **extra_fields):
-        """メールアドレスでの登録を必須にする"""
         if not email:
             raise ValueError('The given email must be set')
 
-        username_validator = ASCIIUsernameValidator()
-        username = self.model.normalize_username(username, required=False, validators=[username_validator])
-        email = self.normalize_email(email, required=True)
+        # username_validator = ASCIIUsernameValidator()
+        # username = self.model.normalize_username(username, required=False, validators=[username_validator])
+        # email = self.normalize_email(email, required=True)
 
         user = self.model(username=username, email=email, **extra_fields)
         user.set_password(password)
@@ -42,13 +41,11 @@ class UserManager(BaseUserManager):
         return user
 
     def create_user(self, email, username=None, password=None, **extra_fields):
-        """is_staff(管理サイトにログインできるか)と、is_superuer(全ての権限)をFalseに"""
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(username, email, password, **extra_fields)
 
     def create_superuser(self, username, email, password, **extra_fields):
-        """スーパーユーザーは、is_staffとis_superuserをTrueに"""
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -63,7 +60,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     """カスタムユーザーモデル(業者用テーブル)"""
 
     id = models.AutoField(primary_key=True)
-    username = models.CharField(_('username'), max_length=150, unique=False)
+    username = models.CharField(_('username'), max_length=150, unique=True)
     password = models.CharField(u"パスワード", max_length=150)
     email = models.EmailField(u'メールアドレス', unique=True)
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
@@ -90,8 +87,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     EMAIL_FIELD = 'email'
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ["email"]
 
     class Meta:
         verbose_name = _('user')
@@ -115,6 +112,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Todo(models.Model):
     title = models.CharField(max_length=200)
     body = models.TextField()
+
+    class Meta:
+        verbose_name = _('todo')
+        verbose_name_plural = _('todos')
+        db_table = 'todo'
 
     def __str__(self):
         return self.title
