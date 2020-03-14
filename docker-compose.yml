@@ -24,8 +24,6 @@ services:
     build: ./react_front/
     container_name: react_front
     restart: always
-    volumes:
-      - ./web:/var/www/react/
     ports:
       - "3000:80"
     tty: true

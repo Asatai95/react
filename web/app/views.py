@@ -85,7 +85,7 @@ class Test(generic.ListView):
     def get(self, request, *args, **kwargs):
         return render(self.request, self.template_name)
 
-class TestAPI(viewsets.ModelViewSet):
+class TestAPI(generics.ListAPIView):
 
     queryset = Todo.objects.all()
     serializer_class = TodoSerializer
