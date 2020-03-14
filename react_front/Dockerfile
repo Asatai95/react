@@ -1,4 +1,8 @@
 FROM node:8
 
-ENV WORKSPACE_DIR /var/www/react
-WORKDIR ${WORKSPACE_DIR}
+RUN mkdir /frontend
+WORKDIR /frontend
+RUN npm install -g create-react-app
+RUN npm install axios
+
+EXPOSE 3000

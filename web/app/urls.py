@@ -15,6 +15,7 @@ register_converter(FourDigitYearConverter, "pk")
 
 urlpatterns = [
     path('test/', views.Test.as_view(), name='test'),
+    path("test_api/", views.TestAPI.as_view(), name="test_api")
 ]
 
 

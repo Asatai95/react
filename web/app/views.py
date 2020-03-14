@@ -33,9 +33,11 @@ from django.contrib import messages
 
 from django.db import models
 from django.db.models import Q, Count, Max, Min
-# from .models import (
-
-# )
+from .models import (
+    Todo,
+)
+from rest_framework import generics
+from .serializers import TodoSerializer
 from django.contrib.sessions.models import Session
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
@@ -77,5 +79,9 @@ class Test(generic.ListView):
     template_name = "apps/test.html"
 
     def get(self, request, *args, **kwargs):
-
         return render(self.request, self.template_name)
+
+class TestAPI(generics.ListAPIView):
+
+    test = Todo.objects.all()
+    serializer_class = TodoSerializer

@@ -27,8 +27,12 @@ services:
     volumes:
       - ./web:/var/www/react/
     ports:
-      - "3000:3000"
+      - "3000:80"
     tty: true
+    expose:
+      - "3000"
+      - "8000"
+      - "80"
     networks:
       - app-net
   web:
