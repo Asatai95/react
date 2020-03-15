@@ -34,13 +34,14 @@ from django.contrib import messages
 from django.db import models
 from django.db.models import Q, Count, Max, Min
 from .models import (
-    Todo,
+    Todo, User,
 )
 
 # rest_framework
 from rest_framework import routers, viewsets, generics
 from rest_framework.response import Response
 from .serializers import TodoSerializer
+from django.views.decorators.csrf import csrf_exempt
 
 from django.contrib.sessions.models import Session
 from django.contrib.auth import get_user_model
@@ -94,3 +95,16 @@ class TestAPI(generics.ListAPIView):
     #     queryset = self.get_queryset()
     #     serializer = TodoSerializer(queryset, many=True)
     #     return Response(serializer.data)
+
+@csrf_exempt
+def TestPOSTAPI(request):
+
+    if request.method == "POST":
+        data = JSONParser().parse(request)
+        print(data)
+        serializer = TodoSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+

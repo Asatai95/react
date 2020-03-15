@@ -5,6 +5,7 @@ WORKDIR WORKSPACE_DIR
 
 RUN npm install create-react-app .
 RUN npm install axios
+RUN npm install bulma
 
 EXPOSE 3000
 

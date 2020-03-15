@@ -81,6 +81,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
+    message = models.TextField(u"メッセージ", blank=True)
     image = models.CharField(u'プロフィール画像', max_length=150)
     # image = CloudinaryField('image', blank=True, null=True)
 
