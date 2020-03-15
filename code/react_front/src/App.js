@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import CSRFToken from './csrftoken';
 import './App.css';
 import axios from 'axios';
 
@@ -50,6 +51,7 @@ class Form extends React.Component {
           type="submit"
           value="SEND POST"
         />
+        <CSRFToken />
       </form>
     );
   }
@@ -138,7 +140,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    axios.get('http://localhost:3031/test_api/profile/')
+    axios.get('http://localhost:3031/test_api/profile/list/')
     .then(response => {
       this.setState({
         users: response.data.reverse(),

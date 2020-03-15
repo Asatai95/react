@@ -18,7 +18,8 @@ register_converter(FourDigitYearConverter, "pk")
 urlpatterns = [
     path('test/', views.Test.as_view(), name='test'),
     path("test_api/", views.TestAPI.as_view(), name="test_api"),
-    path("test_api/profile/", views.TestPOSTAPI.as_view(), name="post_api")
+    path("test_api/profile/", views.TestPOSTAPI.as_view(), name="post_api"),
+    path("test_api/profile/list/", views.TestGETAPI.as_view(), name="get_api")
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -40,7 +40,7 @@ from .models import (
 # rest_framework
 from rest_framework import routers, viewsets, generics
 from rest_framework.response import Response
-from .serializers import TodoSerializer
+from .serializers import TodoSerializer, UserSerializer
 from django.views.decorators.csrf import csrf_exempt
 
 from django.contrib.sessions.models import Session
@@ -96,15 +96,26 @@ class TestAPI(generics.ListAPIView):
     #     serializer = TodoSerializer(queryset, many=True)
     #     return Response(serializer.data)
 
-@csrf_exempt
-def TestPOSTAPI(request):
+# @csrf_exempt
+class TestPOSTAPI(generic.FormView):
+    model = User
 
-    if request.method == "POST":
-        data = JSONParser().parse(request)
-        print(data)
-        serializer = TodoSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+    def post(self, request, *args, **kwargs):
+
+        test = json.loads(request.body.decode('utf-8'))
+        print("test")
+        print(test)
+        return test
+
+class TestGETAPI(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+#     if request.method == "POST":
+#         data = JSONParser().parse(request)
+#         print(data)
+#         serializer = TodoSerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return JsonResponse(serializer.data, status=201)
+#         return JsonResponse(serializer.errors, status=400)
 
