@@ -1,0 +1,11 @@
+FROM node:8
+
+ENV WORKSPACE_DIR /var/www/react/react_front
+WORKDIR WORKSPACE_DIR
+
+RUN npm install create-react-app .
+RUN npm install axios
+
+EXPOSE 3000
+
+# CMD ["/bin/bash"]

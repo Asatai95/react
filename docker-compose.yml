@@ -21,11 +21,17 @@ services:
     networks:
       - app-net
   react:
-    build: ./react_front/
+    build:
+      context: ./code/
+      dockerfile: DockerfileNode
+    image: node:8
     container_name: react_front
     restart: always
+    # command: npx create-react-app . && yarn start
+    volumes:
+      - ./code:/var/www/react
     ports:
-      - "3000:80"
+      - "3000:3000"
     tty: true
     expose:
       - "3000"
@@ -34,13 +40,15 @@ services:
     networks:
       - app-net
   web:
-    build: ./web/
+    build:
+      context: ./code/
+      dockerfile: DockerfilePython
     image: ubuntu:16.04
     container_name: react_app
     restart: always
     # command: python3 manage.py migrate
     volumes:
-      - ./web:/var/www/react/
+      - ./code:/var/www/react
       - ~/Desktop/react/nginx:/etc/nginx
       - ~/Desktop/react/nginx/conf:/etc/nginx/conf.d
       - ~/Desktop/react/nginx/uwsgi_params:/etc/nginx/uwsgi_params

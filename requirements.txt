@@ -101,4 +101,4 @@ django-filter==2.2.0
 djangorestframework==3.11.0
 django-cors-headers==3.2.1
 psycopg2-binary==2.8.4
-Markdown==3.2.1
+Markdown==3.2.1Z
