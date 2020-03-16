@@ -79,6 +79,17 @@ Settingファイル
 from config.settings import *
 # from .library import *
 
+def testAPI(request):
+    if request.method == "OPTIONS":
+        response = HttpResponse()
+        print(response)
+        response['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+        response['Access-Control-Allow-Credentials'] = 'true'
+        response['Access-Control-Allow-Headers'] = "Content-Type, Accept, X-CSRFToken"
+        response['Access-Control-Allow-Methods'] = "POST, OPTIONS"
+        print("response")
+        print(response)
+        return response
 
 class Test(generic.ListView):
     template_name = "apps/test.html"
@@ -96,7 +107,6 @@ class TestAPI(generics.ListAPIView):
     #     serializer = TodoSerializer(queryset, many=True)
     #     return Response(serializer.data)
 
-# @csrf_exempt
 class TestPOSTAPI(generic.FormView):
     model = User
 
@@ -110,12 +120,7 @@ class TestPOSTAPI(generic.FormView):
 class TestGETAPI(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-#     if request.method == "POST":
-#         data = JSONParser().parse(request)
-#         print(data)
-#         serializer = TodoSerializer(data=data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return JsonResponse(serializer.data, status=201)
-#         return JsonResponse(serializer.errors, status=400)
 
+class TestPOSTAPI(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

@@ -2,16 +2,30 @@ import React, { Component } from 'react';
 import CSRFToken from './csrftoken';
 import './App.css';
 import axios from 'axios';
+// import { any } from 'prop-types';
+const axiosPost = axios.create({
+  xsrfHeaderName: 'X-CSRF-Token',
+  withCredentials: true
+})
+
+const header = {
+  'Access-Control-Allow-Origin': 'http://127.0.0.1:3031',
+  "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS",
+  "Access-Control-Allow-Headers": "X-Requested-With, Origin, X-Csrftoken, Content-Type, Accept",
+  "Access-Control-Allow-Credentials": true
+}
+axios.defaults.withCredentials = true;
 
 class Form extends React.Component {
   render() {
     return (
       <form id="post-data" onSubmit={this.props.handleSubmit}>
+        <CSRFToken />
         <div className="field">
           <div className="control">
             <input
               className="input"
-              type="text" name="username"
+              type="text" name="name"
               id="name"
               placeholder="Name"
               value={this.props.username}
@@ -51,7 +65,6 @@ class Form extends React.Component {
           type="submit"
           value="SEND POST"
         />
-        <CSRFToken />
       </form>
     );
   }
@@ -107,7 +120,7 @@ class App extends Component {
   }
 
   handleChange(event) {
-    if (event.target.name === 'username') {
+    if (event.target.name === 'name') {
       this.setState({name: event.target.value});
     }
     else if (event.target.name === 'email') {
@@ -120,13 +133,14 @@ class App extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    const { username, email, message } = this.state;
+    const { name, email, message } = this.state;
     const conf = {
-      'name': username,
+      'name': name,
       'email': email,
       'message': message
     };
-    axios.post("http://localhost:3031/test_api/profile/", conf)
+
+    axiosPost.post("http://localhost:3031/test_api/profile/", conf, header)
     .then(response => {
       this.state.users.unshift(response.data);
       this.setState({
@@ -140,8 +154,10 @@ class App extends Component {
   }
 
   componentDidMount() {
-    axios.get('http://localhost:3031/test_api/profile/list/')
+    axios.get('http://localhost:3031/test_api/profile/list/', header)
     .then(response => {
+      console.log("response")
+      console.log(response)
       this.setState({
         users: response.data.reverse(),
         usersLength: response.data.length,
@@ -162,7 +178,7 @@ class App extends Component {
         </div>
         <div className="column is-6">
           <Form
-            name={this.state.username}
+            name={this.state.name}
             email={this.state.email}
             message={this.state.message}
             handleChange={this.handleChange}
