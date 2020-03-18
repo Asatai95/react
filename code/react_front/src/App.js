@@ -2,19 +2,17 @@ import React, { Component } from 'react';
 import CSRFToken from './csrftoken';
 import './App.css';
 import axios from 'axios';
+// import moment from "moment";
+var moment = require("moment");
+
 // import { any } from 'prop-types';
-const axiosPost = axios.create({
-  xsrfHeaderName: 'X-CSRF-Token',
-  withCredentials: true
-})
 
 const header = {
-  'Access-Control-Allow-Origin': 'http://127.0.0.1:3031',
-  "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS",
+  'Access-Control-Allow-Origin': 'http://localhost:3031',
+  "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS",
   "Access-Control-Allow-Headers": "X-Requested-With, Origin, X-Csrftoken, Content-Type, Accept",
   "Access-Control-Allow-Credentials": true
 }
-axios.defaults.withCredentials = true;
 
 class Form extends React.Component {
   render() {
@@ -48,6 +46,32 @@ class Form extends React.Component {
         </div>
         <div className="field">
           <div className="control">
+            <input
+              className="input"
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Password"
+              value={this.props.password}
+              onChange={this.props.handleChange}
+            />
+          </div>
+        </div>
+        <div className="field">
+          <div className="control">
+            <input
+              className="input"
+              type="password"
+              name="password_check"
+              id="password_check"
+              placeholder="Password Check"
+              value={this.props.password_check}
+              onChange={this.props.handleChange}
+            />
+          </div>
+        </div>
+        <div className="field">
+          <div className="control">
             <textarea
               className="textarea"
               name="message"
@@ -75,10 +99,10 @@ class UserList extends React.Component {
     const listItems = this.props.users.map((u) =>
       <tr key={u.id}>
         <td>{u.id}</td>
-        <td>{u.name}</td>
+        <td>{u.username}</td>
         <td>{u.email}</td>
         <td>{u.message}</td>
-        <td>{u.created_at}</td>
+        <td>{moment(u.date_joined).format("YYYY-MM-DD")}</td>
       </tr>
     );
     return(
@@ -114,6 +138,8 @@ class App extends Component {
       name: "",
       email: "",
       message: "",
+      password: "",
+      password_check: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -129,18 +155,26 @@ class App extends Component {
     else if (event.target.name === 'message') {
       this.setState({message: event.target.value});
     }
+    else if (event.target.name === 'password') {
+      this.setState({message: event.target.value});
+    }
+    else if (event.target.name === 'password_check') {
+      this.setState({message: event.target.value});
+    }
   }
 
   handleSubmit(event) {
     event.preventDefault();
-    const { name, email, message } = this.state;
+    const { name, email, message, password, password_check } = this.state;
     const conf = {
-      'name': name,
+      'username': name,
       'email': email,
-      'message': message
+      'message': message,
+      "password": password,
+      "password_check": password_check
     };
 
-    axiosPost.post("http://localhost:3031/test_api/profile/", conf, header)
+    axios.post("http://localhost:3031/test_api/profile/", conf, header)
     .then(response => {
       this.state.users.unshift(response.data);
       this.setState({
@@ -154,10 +188,8 @@ class App extends Component {
   }
 
   componentDidMount() {
-    axios.get('http://localhost:3031/test_api/profile/list/', header)
+    axios.get('http://localhost:3031/test_api/profile/list/')
     .then(response => {
-      console.log("response")
-      console.log(response)
       this.setState({
         users: response.data.reverse(),
         usersLength: response.data.length,
@@ -180,6 +212,8 @@ class App extends Component {
           <Form
             name={this.state.name}
             email={this.state.email}
+            password={this.state.password}
+            password_check={this.state.password_check}
             message={this.state.message}
             handleChange={this.handleChange}
             handleSubmit={this.handleSubmit}

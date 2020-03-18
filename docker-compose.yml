@@ -27,7 +27,7 @@ services:
     image: node:8
     container_name: react_front
     restart: always
-    # command: npx create-react-app . && yarn start
+    # command: yarn start
     volumes:
       - ./code:/var/www/react
     ports:

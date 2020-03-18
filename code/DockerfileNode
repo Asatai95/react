@@ -6,6 +6,7 @@ WORKDIR WORKSPACE_DIR
 RUN npm install create-react-app .
 RUN npm install axios
 RUN npm install bulma
+RUN npm install moment
 
 EXPOSE 3000
 
