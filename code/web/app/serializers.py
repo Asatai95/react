@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "username", "password", "email", "message")
+        fields = ("id", "username", "email", "message", "password")
 
 class TodoSerializer(serializers.ModelSerializer):
     class Meta:

@@ -82,7 +82,7 @@ Settingファイル
 from config.settings import *
 # from .library import *
 
-def passwordChecker(self, data):
+def passwordChecker(data):
     if data["password"] != data["password_check"]:
         return False
     if not len(data["password_check"]) < 8 and len(data["password_check"]) > 16:
@@ -91,22 +91,19 @@ def passwordChecker(self, data):
     return True
 
 @csrf_exempt
-def testAPI(self, request):
-    print(request.method)
+def testAPI(request):
     if request.method == "POST":
         data = JSONParser().parse(request)
-        print("data")
-        print(data)
-        checker = passwordChecker(self, data)
+        checker = passwordChecker(data)
         if not checker :
             return JsonResponse(serializer.errors, status=400)
         data.pop("password")
-        print(data)
+        data["password"] = data.pop("password_check")
         serializer = CreateUserSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+        return JsonResponse({"status": False, "message": serializer.errors}, status=500)
     # elif request.
 
 class Test(generic.ListView):

@@ -156,10 +156,10 @@ class App extends Component {
       this.setState({message: event.target.value});
     }
     else if (event.target.name === 'password') {
-      this.setState({message: event.target.value});
+      this.setState({password: event.target.value});
     }
     else if (event.target.name === 'password_check') {
-      this.setState({message: event.target.value});
+      this.setState({password_check: event.target.value});
     }
   }
 
@@ -183,6 +183,9 @@ class App extends Component {
       });
     })
     .catch((error) => {
+      console.log("error")
+      console.log(error)
+      console.log(error.message)
       console.error(error);
     });
   }
