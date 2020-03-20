@@ -10,17 +10,25 @@ const passwordValidation = (password: string): string => {
   if (!password) return 'パスワードを入力してください';
   if (password.length < 8 || password.length > 16 ) return 'パスワードは8文字以上16文字以下で入力してください';
   if (password.match(/^[^\x20-\x7e]*$/)) return "パスワードは全角を使用できません";
-  var reg = new RegExp(/[!@#$%^&*()_+-=[]{};:?,.]/g);
+  var reg = new RegExp(/[!"#$%&'()*+\-.,:;<=>?@[\\\]^_`{|}~]/g);
   if (!/[A-Z]/.test(password) || !reg.test(password)) return "最低でも大文字と記号を一文字以上を使用してください"
-  console.log(password)
+  return '';
+};
+
+const passwordcheckValidation = (password_check: string): string => {
+  if (!password_check) return 'パスワードを入力してください';
+  if (password_check.length < 8 || password_check.length > 16 ) return 'パスワードは8文字以上16文字以下で入力してください';
+  if (password_check.match(/^[^\x20-\x7e]*$/)) return "パスワードは全角を使用できません";
+  var reg = new RegExp(/[!"#$%&'()*+\-.,:;<=>?@[\\\]^_`{|}~]/g);
+  if (!/[A-Z]/.test(password_check) || !reg.test(password_check)) return "最低でも大文字と記号を一文字以上を使用してください";
   return '';
 };
 
 const usernameValidation = (name: string): string => {
-    var reg = new RegExp(/[!@#$%^&*()_+-=[]{};:?,.]/g);
-    console.log(reg.test(name))
-    if (reg.test(name)) return "ユーザー名は記号を使用できません"
-    return ""
+  if (!name) return "ユーザー名を入力してください";
+  var reg = new RegExp(/[!"#$%&'()*+\-.,:;<=>?@[\\\]^_`{|}~]/g);
+  if (reg.test(name)) return "ユーザー名は記号を使用できません"
+  return ""
 }
 
 class Validation {
@@ -31,8 +39,9 @@ class Validation {
         case 'password':
             return passwordValidation(value);
         case "name":
-            console.log(usernameValidation(value))
             return usernameValidation(value);
+        case "password_check":
+            return passwordcheckValidation(value);
     }
   };
 }
