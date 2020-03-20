@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import CSRFToken from './csrftoken';
 import './App.css';
 import axios from 'axios';
+import Validation from './Validation';
 // import moment from "moment";
 var moment = require("moment");
 
@@ -147,7 +148,10 @@ class App extends Component {
 
   handleChange(event) {
     if (event.target.name === 'name') {
-      this.setState({name: event.target.value});
+      this.setState({
+        name: event.target.value,
+        checker: Validation.formValidate(event.target.name, event.target.value)
+      });
     }
     else if (event.target.name === 'email') {
       this.setState({email: event.target.value});
@@ -183,10 +187,10 @@ class App extends Component {
       });
     })
     .catch((error) => {
-      console.log("error")
-      console.log(error)
-      console.log(error.message)
-      console.error(error);
+      var label = Object.keys(error.response.data.message)
+      var value = error.response.data.message[label]
+      console.log(value)
+
     });
   }
 
@@ -204,6 +208,7 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.state.name)
     return (
       <div className="columns is-multiline">
         <div className="column is-6">

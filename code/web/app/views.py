@@ -103,7 +103,7 @@ def testAPI(request):
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data, status=201)
-        return JsonResponse({"status": False, "message": serializer.errors}, status=500)
+        return JsonResponse(data = {"status": False, "message": serializer.errors}, status=404)
     # elif request.
 
 class Test(generic.ListView):
