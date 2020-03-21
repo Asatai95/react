@@ -11,13 +11,14 @@ from django.conf.urls.static import static
 from .url_config.url_config import *
 
 from rest_framework import routers
+from django.views.decorators.cache import cache_page
 
 app_name = 'web.app'
 register_converter(FourDigitYearConverter, "pk")
 
 urlpatterns = [
     path('test/', views.Test.as_view(), name='test'),
-    path("test_api/", views.TestAPI.as_view(), name="test_api"),
+    path("test_api/", cache_page(60*60*24)(views.TestAPI.as_view()), name="test_api"),
     path("test_api/profile/", views.testAPI, name="post_api"),
     path("test_api/profile/list/", views.TestGETAPI.as_view(), name="get_api")
 ]

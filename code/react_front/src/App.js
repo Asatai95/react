@@ -3,7 +3,7 @@ import CSRFToken from './csrftoken';
 import './App.css';
 import axios from 'axios';
 import Validation from './Validation';
-import { enumSymbolBody } from '@babel/types';
+// import { enumSymbolBody } from '@babel/types';
 // import { runInThisContext } from 'vm';
 // import moment from "moment";
 var moment = require("moment");
@@ -249,7 +249,7 @@ class App extends Component {
       console.log(value)
       console.log(label)
       this.setState({
-        label: value
+        label: value,
       });
     });
   }
