@@ -17,10 +17,12 @@ app_name = 'web.app'
 register_converter(FourDigitYearConverter, "pk")
 
 urlpatterns = [
+    # path("", views.renderTOP, name="top"),
     path('test/', views.Test.as_view(), name='test'),
     path("test_api/", cache_page(60*60*24)(views.TestAPI.as_view()), name="test_api"),
     path("test_api/profile/", views.testAPI, name="post_api"),
-    path("test_api/profile/list/", views.TestGETAPI.as_view(), name="get_api")
+    path("test_api/profile/list/", views.TestGETAPI.as_view(), name="get_api"),
+    path("error/", views.error_404, name="error404")
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

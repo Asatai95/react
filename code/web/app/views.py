@@ -82,28 +82,50 @@ Settingファイル
 from config.settings import *
 # from .library import *
 
+# 404エラー
+def error_404(request):
+
+    contexts = {
+        'request_path': request.path,
+    }
+
+    return render(request, '404.html', contexts, status=404)
+
+# def renderTOP(request):
+
+#     return redirect("")
+
 def passwordChecker(data):
     if data["password"] != data["password_check"]:
         return False
     if not len(data["password_check"]) < 8 and len(data["password_check"]) > 16:
         return False
-
     return True
+
+def ErrorFlag(data):
+    try:
+        if data["label"] == "check":
+            return False
+    except:
+        return True
 
 @csrf_exempt
 def testAPI(request):
     if request.method == "POST":
         data = JSONParser().parse(request)
-        checker = passwordChecker(data)
-        if not checker :
-            return JsonResponse(serializer.errors, status=400)
-        data.pop("password")
-        data["password"] = data.pop("password_check")
-        serializer = CreateUserSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(data = {"status": False, "message": serializer.errors}, status=404)
+        if ErrorFlag(data) is True:
+            checker = passwordChecker(data)
+            if not checker :
+                return JsonResponse(serializer.errors, status=400)
+            data.pop("password")
+            data["password"] = data.pop("password_check")
+            serializer = CreateUserSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return JsonResponse(serializer.data, status=201)
+            return JsonResponse(data = {"status": False, "message": serializer.errors}, status=404)
+        else:
+            print("pass")
     # elif request.
 
 class Test(generic.ListView):
