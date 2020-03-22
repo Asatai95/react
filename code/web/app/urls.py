@@ -22,6 +22,8 @@ urlpatterns = [
     path("test_api/", cache_page(60*60*24)(views.TestAPI.as_view()), name="test_api"),
     path("test_api/profile/", views.testAPI, name="post_api"),
     path("test_api/profile/list/", views.TestGETAPI.as_view(), name="get_api"),
+    path('test_api/profile/list/search/', views.SearchGETAPI.as_view()),
+    path('test_api/profile/list/search/<str:params>', views.SearchGETAPI.as_view()),
     path("error/", views.error_404, name="error404")
 ]
 

@@ -39,10 +39,11 @@ from .models import (
 )
 
 # rest_framework
-from rest_framework import routers, viewsets, generics
+from rest_framework import routers, viewsets, generics, serializers, filters
 from rest_framework.response import Response
-from .serializers import TodoSerializer, UserSerializer, CreateUserSerializer
+from .serializers import TodoSerializer, UserSerializer, CreateUserSerializer, UserFilter
 from django.views.decorators.csrf import csrf_exempt
+from django_filters.rest_framework import DjangoFilterBackend
 
 from django.contrib.sessions.models import Session
 from django.contrib.auth import get_user_model
@@ -123,10 +124,31 @@ def testAPI(request):
             if serializer.is_valid():
                 serializer.save()
                 return JsonResponse(serializer.data, status=201)
-            return JsonResponse(data = {"status": False, "message": serializer.errors}, status=404)
+            return JsonResponse(data = {"status": False, "message": serializer.errors}, status=500)
         else:
-            print("pass")
-    # elif request.
+            print(data)
+            user = User.objects.filter(is_active = True, username = data["name"])
+            if user.first():
+                return JsonResponse(data = {"status": False, "message": "このユーザー名はすでに使用されています"}, status=500)
+            else:
+                return JsonResponse(data = {"status": True}, status=201)
+
+# class CustomSearchFilter(filters.SearchFilter):
+#     def get_search_fields(self, view, request):
+#         if request.query_params.get('username'):
+#             return ['username']
+#         print(super(CustomSearchFilter, self).get_search_fields(view, request))
+#         return super(CustomSearchFilter, self).get_search_fields(view, request)
+
+class SearchGETAPI(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    filterset_fields = {
+       'username': ('icontains', 'contains'),
+    }
+    search_fields = ["username", "date_joined"]
+    filter_fields = ["username", "date_joined"]
 
 class Test(generic.ListView):
     template_name = "apps/test.html"

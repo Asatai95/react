@@ -1,28 +1,5 @@
 import React from 'react';
 import CSRFToken from '../csrftoken';
-import axios from 'axios';
-import {RouteURL, header} from "./Config";
-
-const onBlurFunc = (info, value) => {
-  var conf = {
-    "label": "check",
-    [info]: value
-  }
-  console.log(conf)
-  axios.post(RouteURL() + "/test_api/profile/", conf, header)
-  .catch((error) => {
-    // var label = Object.keys(error.response.data.message)
-    // var value = error.response.data.message[label]
-    // if (label === "username"){
-    //   label = "name"
-    // }
-    // label = label + "_error"
-    // this.setState({
-    //   [label]: value,
-    // });
-    console.log(error)
-  });
-}
 
 export default class Form extends React.Component {
   render() {
@@ -38,7 +15,7 @@ export default class Form extends React.Component {
               placeholder="Name"
               value={this.props.name}
               onChange={this.props.handleChange}
-              onBlur={() => onBlurFunc("name", this.props.name)}
+              onBlur={this.props.onBlurFunc}
             />
             {this.props.name_error && (
               <p className="error" style={{ color: 'red', fontSize: 15 }}>{this.props.name_error}</p>
@@ -101,7 +78,7 @@ export default class Form extends React.Component {
               id="body"
               cols="10"
               rows="3"
-              placeholder="Message"
+              placeholder="テキスト(200文字以内)"
               value={this.props.message}
               onChange={this.props.handleChange}>
             </textarea>
@@ -110,11 +87,22 @@ export default class Form extends React.Component {
             )}
           </div>
         </div>
-        <input
-          className="button is-fullwidth is-primary is-outlined"
-          type="submit"
-          value="SEND POST"
-        />
+        {this.props.flag && (
+          <input
+            className="button is-fullwidth is-primary is-outlined"
+            type="submit"
+            value="ERROR"
+            disabled={this.props.flag}
+          />
+        )}
+        {!this.props.flag && (
+          <input
+            className="button is-fullwidth is-primary is-outlined"
+            type="submit"
+            value="SEND POST"
+            disabled={this.props.flag}
+          />
+        )}
       </form>
     );
   }

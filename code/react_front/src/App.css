@@ -41,6 +41,10 @@
   }
 }
 
+a.navbar-item {
+  font-weight: 800;
+}
+
 /* 上記はグローバル */
 
 .control p.error {
@@ -48,4 +52,93 @@
   background: #f5f5f5;
   font-weight: 800;
   border-radius: 0px 0px 10px 10px;
+}
+
+.button.is-fullwidth.is-primary.is-outlined:disabled {
+  color: red;
+  background: rgb(255,0,0,.3);
+  font-weight: 800;
+  border-color: rgb(255,0,0,.3);
+}
+
+.notification p {
+  font-weight: 800;
+}
+
+.noteIMG {
+  height: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url("./img/logo512.png");
+  background-size: 45% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.listNAME {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 10px 0;
+}
+
+.Notable {
+  height: 300px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Notable p {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.noteIMG ul {
+  height: 60%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  flex-direction: column;
+  width: 50%;
+  margin: auto;
+  background: rgb(255,255,255, .8);
+}
+
+.noteIMG ul li {
+  font-size : 18px;
+  font-weight: 800;
+}
+
+.listNAME .selectBOX {
+  display: flex;
+  align-items: center;
+  margin-left: 50px;
+}
+
+.listNAME .selectBOX input {
+  font-size: 16px;
+  font-weight: 800;
+  width: 125px;
+  padding: 10px;
+  border: 2px solid;
+  border-radius: 3px;
+}
+
+.listNAME .selectBOX input[name="search"] {
+  width: 200px;
+}
+
+.listNAME .selectBOX span {
+  font-weight: 800;
+  padding: 0 10px;
+  font-size: 16px;
+}
+
+.listNAME .selectBOX .date,
+.listNAME .selectBOX .username {
+  display: flex;
+  align-items: center;
 }

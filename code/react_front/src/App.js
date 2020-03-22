@@ -4,6 +4,7 @@ import axios from 'axios';
 import Validation from './Validation';
 import Form from './js/Form';
 import UserList from './js/UserList';
+import Search from './js/SearchForm';
 import {RouteURL, header} from "./js/Config";
 // import Router from "./js/Router";
 // import moment from "moment";
@@ -24,11 +25,14 @@ class App extends Component {
       message_error: "",
       password_error: "",
       password_check_error: "",
+      flag: false,
       // loading: false
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.onBlurFunc = this.onBlurFunc.bind(this);
+    this.searchItem = this.searchItem.bind(this);
   }
 
   handleChange(event) {
@@ -89,8 +93,26 @@ class App extends Component {
     }
   }
 
+  onBlurFunc(event){
+    var value = event.target.value.trim();
+
+    var conf = {
+      "label": "check",
+      [event.target.name]: value
+    }
+    axios.post(RouteURL() + "/test_api/profile/", conf, header)
+    .catch((error) => {
+      var label = "name_error"
+      var value = error.response.data.message
+      this.setState({
+        [label]: value,
+      });
+    });
+  }
+
   handleSubmit(event) {
     event.preventDefault();
+
     const { name, email, message, password, password_check } = this.state;
     const conf = {
       'username': name,
@@ -106,20 +128,26 @@ class App extends Component {
       this.setState({
         users: this.state.users,
         usersLength: this.state.users.length,
+        name: "",
+        email: "",
+        message: "",
+        password: "",
+        password_check: "",
       });
-      console(document.getElementById("post-data"))
     })
     .catch((error) => {
       if (error.response !== undefined){
         var label = Object.keys(error.response.data.message)
-        var value = error.response.data.message[label]
-        if (label.join("") === "username"){
-          label = "name"
+        for (var i = 0 ; i < label.length; i++){
+          var value = error.response.data.message[label[i]]
+          if (label[i] === "username"){
+            label[i] = "name"
+          }
+          var error_label = label[i] + "_error"
+          this.setState({
+            [error_label]: value,
+          });
         }
-        label = label + "_error"
-        this.setState({
-          [label]: value,
-        });
       }
     });
   }
@@ -138,12 +166,58 @@ class App extends Component {
     });
   }
 
+  searchItem(event){
+    console.log(event.target.value)
+    var value = event.target.value.trim();
+    var label = event.target.name;
+    if (label === "start_date" || label === "end_date") {
+      label = "date_joined"
+    }
+    const conf = {
+      params: {
+        [label]: label,
+        "search": value
+      }
+    }
+    console.log("conf")
+    console.log(conf)
+    axios.get(RouteURL() + '/test_api/profile/list/search/', conf)
+    .then(response => {
+      this.setState({
+        users: response.data.reverse(),
+        usersLength: response.data.length,
+      });
+    })
+    .catch((error) => {
+      console.error(error)
+      // window.location.href = RouteURL() + "/error/";
+    });
+
+  }
+
   render() {
+    var flag_label = true
+    var label = Object.keys(this.state)
+    for (var i = 0; i < label.length; i++){
+      if (label[i].indexOf("_error") > -1 && this.state[label[i]] !== ""){
+        flag_label = "disable";
+      }
+    }
+    if (flag_label === true){
+      flag_label = "";
+    }
+    console.log(this.state.usersLength)
     return (
       <div className="columns is-multiline">
         <div className="column is-6">
           <div className="notification">
-            This is my react-django app.
+            <p>今日のTODOリスト</p>
+          </div>
+          <div className="noteIMG">
+            <ul>
+              <li>・今日のタスク管理</li>
+              <li>・1日のやることを簡単に管理</li>
+            </ul>
           </div>
         </div>
         <div className="column is-6">
@@ -160,13 +234,27 @@ class App extends Component {
             message_error={this.state.message_error}
             handleChange={this.handleChange}
             handleSubmit={this.handleSubmit}
+            onBlurFunc={this.onBlurFunc}
+            flag={flag_label}
           />
         </div>
         <div className="column is-12" id="user-table">
-          <p>There are {this.state.usersLength} users.</p>
-          <UserList
-            users={this.state.users}
-          />
+          <div className="listNAME">
+            <p>There are {this.state.usersLength} users.</p>
+            <Search
+              searchItem={this.searchItem}
+            />
+          </div>
+          {this.state.usersLength !== 0 && (
+            <UserList
+              users={this.state.users}
+            />
+          )}
+          {this.state.usersLength === 0 && (
+            <div className="Notable">
+              <p>検索結果なし</p>
+            </div>
+          )}
         </div>
       </div>
     );
