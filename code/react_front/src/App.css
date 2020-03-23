@@ -81,6 +81,7 @@ a.navbar-item {
   align-items: center;
   justify-content: flex-start;
   margin: 10px 0;
+  height: 50px;
 }
 
 .Notable {
@@ -121,13 +122,13 @@ a.navbar-item {
 .listNAME .selectBOX input {
   font-size: 16px;
   font-weight: 800;
-  width: 125px;
+  width: 150px;
   padding: 10px;
   border: 2px solid;
   border-radius: 3px;
 }
 
-.listNAME .selectBOX input[name="search"] {
+.listNAME .selectBOX input[name="username"] {
   width: 200px;
 }
 
@@ -141,4 +142,31 @@ a.navbar-item {
 .listNAME .selectBOX .username {
   display: flex;
   align-items: center;
+}
+
+/* カレンダー */
+.react-datepicker__input-container .example-custom-input {
+  font-size: 16px;
+  font-weight: 800;
+  width: 150px;
+  padding: 10px;
+  border-radius: 3px;
+  text-align: left;
+  cursor: pointer;
+  background: rgb(255,255,255);
+  border: solid #00d1b2;
+  border-width: 1px 1px 4px;
+  transition: 1s;
+}
+
+.react-datepicker__input-container .example-custom-input:hover {
+  border: none;
+  background: #00d1b2;
+}
+
+.react-datepicker__input-container .react-datepicker__close-icon::after {
+  font-size: 15px;
+  font-weight: 800;
+  height: 20px;
+  width: 20px;
 }

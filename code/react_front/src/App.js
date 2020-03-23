@@ -5,7 +5,7 @@ import Validation from './Validation';
 import Form from './js/Form';
 import UserList from './js/UserList';
 import Search from './js/SearchForm';
-import {RouteURL, header} from "./js/Config";
+import {RouteURL, header, userList} from "./js/Config";
 // import Router from "./js/Router";
 // import moment from "moment";
 
@@ -159,15 +159,15 @@ class App extends Component {
         users: response.data.reverse(),
         usersLength: response.data.length,
       });
+      userList(response);
     })
     .catch((error) => {
       console.error(error)
-      window.location.href = RouteURL() + "/error/";
+      // window.location.href = RouteURL() + "/error/";
     });
   }
 
   searchItem(event){
-    console.log(event.target.value)
     var value = event.target.value.trim();
     var label = event.target.name;
     if (label === "start_date" || label === "end_date") {
