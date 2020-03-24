@@ -3,7 +3,6 @@ import DatePicker, { registerLocale } from 'react-datepicker'
 import {userList} from "./Config";
 import "react-datepicker/dist/react-datepicker.css";
 import ja from 'date-fns/locale/ja'
-import { updateExpression } from '@babel/types';
 registerLocale('ja', ja);
 
 export const LocalDatePicker = () => {
@@ -18,15 +17,8 @@ export const LocalDatePicker = () => {
     var date_db;
     console.log(userList())
     date_db = userList()
-    if (date_db !== undefined){
-        const [startDate, setStartDate] = useState(date_list[0]);
-        const [endDate, setEndDate] = useState(date_list[date_list.length]);
-    } else {
-        const [startDate, setStartDate] = useState(new Date());
-        var date_last = new Date()
-        date_last.setDate(date_last.getDate() + 3)
-        const [endDate, setEndDate] = useState(date_last)
-    }
+    const [startDate, setStartDate] = useState(date_db[0]);
+    const [endDate, setEndDate] = useState(date_db[date_db.lengh]);
 
     return (
 
