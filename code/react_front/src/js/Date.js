@@ -1,6 +1,7 @@
 import React, {forwardRef, useState} from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker'
 import {userList} from "./Config";
+
 import "react-datepicker/dist/react-datepicker.css";
 import ja from 'date-fns/locale/ja'
 
@@ -24,16 +25,24 @@ export const LocalDatePicker = (response) => {
     const [startDate, setStartDate] = useState(Date.parse(date_db.date[list_count - 1]))
     const [endDate, setEndDate] = useState( Date.parse(date_db.date[0]))
 
+    const handleChange = (info, date) => {
+        response["handleDateChange"](info, date)
+        if (info === "start"){
+            setStartDate(date)
+        } else {
+            setEndDate(date)
+        }
+    }
+
     return (
       <div className="date">
         <span>日付</span>
         <DatePicker
             locale="ja"
             selected={startDate}
-            onChange={date => setStartDate(date)}
+            onChange={date => handleChange("start", date)}
             dateFormat="yyyy-MM-dd"
             selectsStart
-            isClearable
             placeholderText="20XX-XX-XX"
             startDate={startDate}
             endDate={endDate}
@@ -43,10 +52,9 @@ export const LocalDatePicker = (response) => {
         <DatePicker
             locale="ja"
             selected={endDate}
-            onChange={date => setEndDate(date)}
+            onChange={date => handleChange("end", date)}
             dateFormat="yyyy-MM-dd"
             selectsEnd
-            isClearable
             placeholderText="20XX-XX-XX"
             startDate={startDate}
             endDate={endDate}

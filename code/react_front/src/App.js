@@ -34,6 +34,7 @@ class App extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.onBlurFunc = this.onBlurFunc.bind(this);
     this.searchItem = this.searchItem.bind(this);
+    this.handleDateChange = this.handleDateChange.bind(this)
   }
 
   handleChange(event) {
@@ -92,6 +93,53 @@ class App extends Component {
         }
       }
     }
+  }
+
+  handleDateChange(label, event){
+    const getStringFromDate = (date) => {
+      var year_str = date.getFullYear();
+      var month_str = 1 + date.getMonth();
+      var day_str = date.getDate();
+      var format_str = 'YYYY-MM-DD';
+      format_str = format_str.replace(/YYYY/g, year_str);
+      format_str = format_str.replace(/MM/g, month_str);
+      format_str = format_str.replace(/DD/g, day_str);
+      return format_str;
+    };
+    var item;
+    if (event !== null){
+      item = getStringFromDate(event)
+    } else {
+      item = getStringFromDate(new Date())
+    }
+    var search_username = document.getElementsByClassName("searchusername")[0].value
+
+    var search_value;
+    if (label === "end") {
+      search_value = document.getElementsByClassName("example-custom-input")[0].textContent
+    } else {
+      search_value = document.getElementsByClassName("example-custom-input")[1].textContent
+    }
+
+    const conf = {
+      params: {
+        "label": label,
+        "search": item,
+        "search_other": search_value,
+        "search_other_value": search_username
+      }
+    }
+    axios.get(RouteURL() + '/test_api/profile/list/search/', conf)
+    .then(response => {
+      this.setState({
+        users: response.data.reverse(),
+        usersLength: response.data.length,
+      });
+    })
+    .catch((error) => {
+      console.error(error)
+      // window.location.href = RouteURL() + "/error/";
+    });
   }
 
   onBlurFunc(event){
@@ -171,17 +219,17 @@ class App extends Component {
   searchItem(event){
     var value = event.target.value.trim();
     var label = event.target.name;
-    if (label === "start_date" || label === "end_date") {
-      label = "date_joined"
-    }
+    var search_value_1 = document.getElementsByClassName("example-custom-input")[0].textContent
+    var search_value_2 = document.getElementsByClassName("example-custom-input")[1].textContent
+
     const conf = {
       params: {
-        [label]: label,
-        "search": value
+        "label": label,
+        "search": value,
+        "search_other": search_value_1,
+        "search_other_value": search_value_2
       }
     }
-    console.log("conf")
-    console.log(conf)
     axios.get(RouteURL() + '/test_api/profile/list/search/', conf)
     .then(response => {
       this.setState({
@@ -245,6 +293,7 @@ class App extends Component {
             <Search
               searchItem={this.searchItem}
               respose_item_date={this.state.respose_item_date}
+              handleDateChange={this.handleDateChange}
             />
           </div>
           {this.state.usersLength !== 0 && (

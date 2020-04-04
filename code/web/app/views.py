@@ -133,22 +133,36 @@ def testAPI(request):
             else:
                 return JsonResponse(data = {"status": True}, status=201)
 
-# class CustomSearchFilter(filters.SearchFilter):
-#     def get_search_fields(self, view, request):
-#         if request.query_params.get('username'):
-#             return ['username']
-#         print(super(CustomSearchFilter, self).get_search_fields(view, request))
-#         return super(CustomSearchFilter, self).get_search_fields(view, request)
-
 class SearchGETAPI(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
-    filterset_fields = {
-       'username': ('icontains', 'contains'),
-    }
-    search_fields = ["username", "date_joined"]
-    filter_fields = ["username", "date_joined"]
+
+    def get_queryset(self):
+        label = self.request.query_params.get("label")
+        value = self.request.query_params.get("search")
+        other_value = self.request.query_params.get("search_other")
+        other_value_1 = self.request.query_params.get("search_other_value")
+
+        table = User.objects.all()
+        if label == "username":
+            table = table.filter(username__contains=value, username__icontains=value, date_joined__gte=other_value, date_joined__lte=other_value_1)
+        elif label == "start":
+            datetimeitem = datetime.strptime(value, '%Y-%m-%d')
+            datetimeitem_other = datetime.strptime(other_value, '%Y-%m-%d')
+            if other_value_1 :
+                table = table.filter(date_joined__gte=datetimeitem, date_joined__lte=datetimeitem_other, username__icontains=other_value_1)
+            else:
+                table = table.filter(date_joined__gte=datetimeitem, date_joined__lte=datetimeitem_other)
+        elif label == "end":
+            datetimeitem = datetime.strptime(value, '%Y-%m-%d')
+            datetimeitem_other = datetime.strptime(other_value, '%Y-%m-%d')
+            if other_value_1 != "":
+                table = table.filter(date_joined__gte=datetimeitem_other, date_joined__lte=datetimeitem, username__icontains=other_value_1)
+            else:
+                table = table.filter(date_joined__gte=datetimeitem_other, date_joined__lte=datetimeitem)
+
+        return table
 
 class Test(generic.ListView):
     template_name = "apps/test.html"
