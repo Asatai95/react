@@ -5,7 +5,7 @@ import Validation from './Validation';
 import Form from './js/Form';
 import UserList from './js/UserList';
 import Search from './js/SearchForm';
-import {RouteURL, header, userList} from "./js/Config";
+import {RouteURL, header} from "./js/Config";
 // import Router from "./js/Router";
 // import moment from "moment";
 
@@ -25,6 +25,7 @@ class App extends Component {
       message_error: "",
       password_error: "",
       password_check_error: "",
+      respose_item_date : "",
       flag: false,
       // loading: false
     };
@@ -158,8 +159,8 @@ class App extends Component {
       this.setState({
         users: response.data.reverse(),
         usersLength: response.data.length,
+        respose_item_date: response.data.reverse(),
       });
-      userList(response);
     })
     .catch((error) => {
       console.error(error)
@@ -206,7 +207,7 @@ class App extends Component {
     if (flag_label === true){
       flag_label = "";
     }
-    console.log(this.state.usersLength)
+    console.log(this.state)
     return (
       <div className="columns is-multiline">
         <div className="column is-6">
@@ -243,6 +244,7 @@ class App extends Component {
             <p>There are {this.state.usersLength} users.</p>
             <Search
               searchItem={this.searchItem}
+              respose_item_date={this.state.respose_item_date}
             />
           </div>
           {this.state.usersLength !== 0 && (

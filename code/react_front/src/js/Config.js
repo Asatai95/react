@@ -20,22 +20,22 @@ export const header = {
 }
 
 // 初期ユーザーデータの取得
+const date_list = {}
 export const userList = (response) => {
     var date_db;
     const tmp_date_list = [];
-    const date_list = {}
     if (response !== undefined){
-        for (var i = 0; i < response.data.length; i++){
-            date_db = response.data[i].date_joined
+        for (var i = 0; i < response.length; i++){
+            date_db = response[i].date_joined
             tmp_date_list.push(date_db)
         }
         tmp_date_list.sort(function(a,b) {
             return (a.date < b.date ? 1 : -1);
         });
-        console.log("tmp_date_list")
-        console.log(tmp_date_list)
+
         date_list["date"] = tmp_date_list
         date_list["usersLength"] = tmp_date_list.length
+
         return date_list;
     }
 }

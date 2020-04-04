@@ -2,9 +2,14 @@ import React from 'react';
 import {LocalDatePicker} from "./Date";
 export default class Search extends React.Component {
     render() {
+      console.log(this.props.respose_item_date)
       return (
         <div className="selectBOX">
-          <LocalDatePicker />
+          { this.props.respose_item_date !== "" && (
+            <LocalDatePicker
+              respose_item_date={this.props.respose_item_date}
+            />
+          )}
           <span>/</span>
           <div className="username">
             <span>ユーザー名</span>

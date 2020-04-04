@@ -3,9 +3,10 @@ import DatePicker, { registerLocale } from 'react-datepicker'
 import {userList} from "./Config";
 import "react-datepicker/dist/react-datepicker.css";
 import ja from 'date-fns/locale/ja'
+
 registerLocale('ja', ja);
 
-export const LocalDatePicker = () => {
+export const LocalDatePicker = (response) => {
 
     const ExampleCustomInput = forwardRef(({ onClick, value }, ref) => (
         <button ref={ref} className="example-custom-input" onClick={onClick}>
@@ -15,13 +16,15 @@ export const LocalDatePicker = () => {
     const ref = React.createRef();
 
     var date_db;
-    console.log(userList())
-    date_db = userList()
-    const [startDate, setStartDate] = useState(date_db[0]);
-    const [endDate, setEndDate] = useState(date_db[date_db.lengh]);
+    var list_count;
+
+    date_db = userList(response["respose_item_date"])
+    list_count = date_db.date.length;
+
+    const [startDate, setStartDate] = useState(Date.parse(date_db.date[list_count - 1]))
+    const [endDate, setEndDate] = useState( Date.parse(date_db.date[0]))
 
     return (
-
       <div className="date">
         <span>日付</span>
         <DatePicker
