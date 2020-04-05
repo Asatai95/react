@@ -1,6 +1,6 @@
 import React, {forwardRef, useState} from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker'
-import {userList} from "./Config";
+import {userList} from "../../assets/Config";
 
 import "react-datepicker/dist/react-datepicker.css";
 import ja from 'date-fns/locale/ja'

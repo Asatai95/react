@@ -1,6 +1,10 @@
 const TerserPlugin = require('terser-webpack-plugin');
+var webpack = require('webpack');
+var path    = require('path');
 
 module.exports = {
+  context: path.join(__dirname, "src"),
+  entry: "./js/index.js",
   optimization: {
     minimizer: [
       new TerserPlugin({
@@ -27,9 +31,22 @@ module.exports = {
             plugins: ["@babel/preset-env", "@babel/preset-react", '@babel/plugin-syntax-jsx']
           }
         }
-      }
-    ]
+      },
+      {
+        test: /\.css$/,
+        loaders: ['style-loader', 'css-loader?modules'],
+      },
+    ],
+
   },
+  output: {
+    path: __dirname + "/src/",
+    publicPath: '/'
+  },
+  plugins: debug ? [] : [
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false }),
+  ],
   resolve: {
     extensions: ['.js', '.jsx', '.json']
   }

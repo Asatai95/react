@@ -47,6 +47,14 @@ a.navbar-item {
 
 /* 上記はグローバル */
 
+html, body{
+  background-image: unset;
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100%;
+  font-family: 'Numans', sans-serif;
+}
+
 .control p.error {
   padding: 10px 10px;
   background: #f5f5f5;
@@ -70,7 +78,7 @@ a.navbar-item {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: url("./img/logo512.png");
+  background: url("../assets/img/logo512.png");
   background-size: 45% 100%;
   background-repeat: no-repeat;
   background-position: center;

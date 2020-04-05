@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import './App.css';
+import './top.css';
 import axios from 'axios';
-import Validation from './Validation';
+import Validation from '../Validation';
 import Form from './js/Form';
 import UserList from './js/UserList';
 import Search from './js/SearchForm';
-import {RouteURL, header} from "./js/Config";
+import {header, RouteURL} from "../assets/Config";
 // import Router from "./js/Router";
 // import moment from "moment";
 
@@ -255,7 +255,7 @@ class App extends Component {
     if (flag_label === true){
       flag_label = "";
     }
-    console.log(this.state)
+
     return (
       <div className="columns is-multiline">
         <div className="column is-6">
@@ -290,11 +290,13 @@ class App extends Component {
         <div className="column is-12" id="user-table">
           <div className="listNAME">
             <p>There are {this.state.usersLength} users.</p>
-            <Search
-              searchItem={this.searchItem}
-              respose_item_date={this.state.respose_item_date}
-              handleDateChange={this.handleDateChange}
-            />
+            { this.state.usersLength !== 0 && (
+              <Search
+                searchItem={this.searchItem}
+                respose_item_date={this.state.respose_item_date}
+                handleDateChange={this.handleDateChange}
+              />
+            )}
           </div>
           {this.state.usersLength !== 0 && (
             <UserList

@@ -1,5 +1,5 @@
 import React from 'react';
-import CSRFToken from '../csrftoken';
+import CSRFToken from '../../csrftoken';
 
 export default class Form extends React.Component {
   render() {

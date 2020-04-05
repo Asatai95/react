@@ -16,6 +16,7 @@ from django.views.static import serve
 urlpatterns = [
     path('', include('app.urls')),
     path('', include('app.urls', namespace="apps")),
+    path('register/', include('app.urls', namespace="register")),
     # url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     url(r'^static/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT})
 ]

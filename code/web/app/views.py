@@ -32,18 +32,21 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
 
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q, Count, Max, Min
 from .models import (
     Todo, User,
 )
 
 # rest_framework
-from rest_framework import routers, viewsets, generics, serializers, filters
+from rest_framework import routers, viewsets, generics, serializers, filters, authentication, permissions
 from rest_framework.response import Response
-from .serializers import TodoSerializer, UserSerializer, CreateUserSerializer, UserFilter
+from .serializers import (
+    TodoSerializer, UserSerializer, CreateUserSerializer, UserFilter, AccountSerializer
+)
 from django.views.decorators.csrf import csrf_exempt
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.exceptions import AuthenticationFailed
 
 from django.contrib.sessions.models import Session
 from django.contrib.auth import get_user_model
@@ -178,3 +181,16 @@ class TestAPI(generics.ListAPIView):
 class TestGETAPI(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+class Login(generics.CreateAPIView):
+    permission_classes = (permissions.AllowAny,)
+    queryset = User.objects.all()
+    serializer_class = AccountSerializer
+
+    @transaction.atomic
+    def post(self, request, format=None):
+        serializer = AccountSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import NotFound from '../404'
+import { builtinModules } from 'module';
 
 export const Router = () => (
     <BrowserRouter>
@@ -38,4 +39,9 @@ export const userList = (response) => {
 
         return date_list;
     }
+}
+
+// ログイン画面のclassName変更
+export const ClassContainer = () => {
+    document.getElementById('root').className= "container-main-back"
 }
