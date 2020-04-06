@@ -23,7 +23,6 @@ from django.core.management.base import BaseCommand
 SILENCED_SYSTEM_CHECKS = ["auth.W004"]
 
 class UserManager(BaseUserManager):
-    """ユーザーマネージャー."""
 
     use_in_migrations = True
 
@@ -57,12 +56,11 @@ class UserManager(BaseUserManager):
         return self._create_user(username, email, password, **extra_fields)
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """カスタムユーザーモデル(業者用テーブル)"""
 
     id = models.AutoField(primary_key=True)
-    username = models.CharField(_('username'), max_length=150, unique=True)
+    username = models.CharField(_('username'), max_length=150, unique=False)
     password = models.CharField(u"パスワード", max_length=150)
-    email = models.EmailField(u'メールアドレス', unique=False)
+    email = models.EmailField(u'メールアドレス', unique=True)
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=150, blank=True)
 
@@ -88,8 +86,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     EMAIL_FIELD = 'email'
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ["email"]
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
 
     class Meta:
         verbose_name = _('user')

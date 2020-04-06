@@ -39,10 +39,15 @@ from .models import (
 )
 
 # rest_framework
+# from rest_framework.authtoken.views import ObtainAuthToken
+from .config.view_auth import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework import routers, viewsets, generics, serializers, filters, authentication, permissions
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from .serializers import (
-    TodoSerializer, UserSerializer, CreateUserSerializer, UserFilter, AccountSerializer
+    TodoSerializer, UserSerializer, CreateUserSerializer, UserFilter, AccountSerializer, UserAuthentication
 )
 from django.views.decorators.csrf import csrf_exempt
 from django_filters.rest_framework import DjangoFilterBackend
@@ -182,15 +187,28 @@ class TestGETAPI(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-class Login(generics.CreateAPIView):
-    permission_classes = (permissions.AllowAny,)
-    queryset = User.objects.all()
-    serializer_class = AccountSerializer
+class Login(ObtainAuthToken):
 
-    @transaction.atomic
-    def post(self, request, format=None):
-        serializer = AccountSerializer(data=request.data)
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        print(serializer.is_valid())
+        print(request.data)
+        print(serializer)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            user = serializer.validated_data['user']
+            token, created = Token.objects.get_or_create(user=user)
+            print(user)
+            print(created)
+            print(token)
+            xasca
+            return Response({
+                'token': token.key,
+                'user_id': user.pk,
+                'email': user.email
+            }, status=201)
+        print("serializer.errors")
+        print(serializer.errors)
+        return Response(data = {"status": False, "message": serializer.errors}, status=500 )
+
+

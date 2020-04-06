@@ -34,6 +34,14 @@ class TodoSerializer(serializers.ModelSerializer):
         model = Todo
         fields = ('id', 'title', 'body',)
 
+class UserAuthentication(serializers.ModelSerializer):
+    email = filters.CharFilter(name="email", lookup_expr='contains')
+    password = filters.CharFilter(name="password", lookup_expr="contains")
+
+    class Meta:
+        model = User
+        fields = ("email", "password")
+
 class AccountSerializer(serializers.ModelSerializer):
     username = serializers.CharField(max_length=150)
     # email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
@@ -45,6 +53,7 @@ class AccountSerializer(serializers.ModelSerializer):
     def validate(self, data):
         user = User(**data)
         password = data.get('password')
+        print("password")
         print(password)
         errors = dict()
         try:

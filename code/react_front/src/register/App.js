@@ -13,6 +13,7 @@ class Login extends Component {
           password: "",
           email_error: "",
           password_error: "",
+          detail_error: "",
           flag: false,
         };
 
@@ -23,12 +24,22 @@ class Login extends Component {
     handleChange(event) {
       var value = event.target.value.trim();
       if (event.target.name === 'email') {
+        if (this.state.email !== value && this.state.detail_error !== "") {
+            this.setState({
+                detail_error: ""
+            })
+        }
         this.setState({
           email: value,
           email_error: Validation.formValidate(event.target.name, value)
         });
       }
       else if (event.target.name === 'password') {
+        if (this.state.password !== value && this.state.detail_error !== ""){
+            this.setState({
+                detail_error: ""
+            })
+        }
         this.setState({
           password: value,
         });
@@ -36,40 +47,38 @@ class Login extends Component {
     }
 
     handleSubmit(event) {
-      event.preventDefault();
-
-      const { email, password } = this.state;
-      const conf = {
-        'email': email,
-        "password": password,
-      };
-
-      axios.post(RouteURL() + "/login/api/", conf, header)
-      .then(response => {
-        this.state.users.unshift(response.data);
-        this.setState({
-          email: "",
-          password: "",
-        });
-      })
-      .catch((error) => {
-        if (error.response !== undefined){
-          var label = Object.keys(error.response.data.message)
-          for (var i = 0 ; i < label.length; i++){
-            var value = error.response.data.message[label[i]]
-            if (label[i] === "username"){
-              label[i] = "name"
+        event.preventDefault();
+        const { email, password } = this.state;
+        const conf = {
+          'email': email,
+          "password": password,
+        };
+        axios.post(RouteURL() + "/login/api/", conf, header)
+        .then(response => {
+          this.state.users.unshift(response.data);
+          this.setState({
+            email: "",
+            password: "",
+          });
+        })
+        .catch((error) => {
+            console.log(error)
+            console.log(error.response)
+            if (error.response !== undefined){
+              var label = Object.keys(error.response.data.message)
+              for (var i = 0 ; i < label.length; i++){
+                var value = error.response.data.message[label[i]]
+                var error_label = label[i] + "_error"
+                this.setState({
+                  [error_label]: value,
+                });
+              }
             }
-            var error_label = label[i] + "_error"
-            this.setState({
-              [error_label]: value,
-            });
-          }
-        }
-      });
+        });
     }
 
     render(){
+
         var flag_label = true
         var label = Object.keys(this.state)
         for (var i = 0; i < label.length; i++){
@@ -101,9 +110,9 @@ class Login extends Component {
                                 password={this.state.password}
                                 email_error={this.state.email_error}
                                 password_error={this.state.password_error}
+                                detail_error={this.state.detail_error}
                                 handleChange={this.handleChange}
                                 handleSubmit={this.handleSubmit}
-                                onBlurFunc={this.onBlurFunc}
                                 flag={flag_label}
                             />
                         </div>

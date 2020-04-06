@@ -64,7 +64,7 @@ a.navbar-item {
 }
 
 .card{
-    height: 370px;
+    height: 400px;
     margin-top: auto;
     margin-bottom: auto;
     width: 400px;
@@ -167,4 +167,11 @@ input:focus{
 
 .fieldblock__login .form-group {
     margin-bottom: 10px;
+}
+
+.error.login_form {
+    color: red;
+    font-size: 15;
+    font-weight: 800;
+    text-align: center;
 }

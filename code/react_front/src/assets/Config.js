@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import NotFound from '../404'
-import { builtinModules } from 'module';
 
 export const Router = () => (
     <BrowserRouter>

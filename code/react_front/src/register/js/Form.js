@@ -22,7 +22,7 @@ export default class Form extends React.Component {
             />
           </div>
           {this.props.email_error && (
-            <p className="error" style={{ color: 'red', fontSize: 15 }}>{this.props.email_error}</p>
+            <p className="error login_form">{this.props.email_error}</p>
           )}
         </div>
         <div className="fieldblock__login">
@@ -41,7 +41,7 @@ export default class Form extends React.Component {
             />
           </div>
           {this.props.password_error && (
-            <p className="error" style={{ color: 'red', fontSize: 15 }}>{this.props.password_error}</p>
+            <p className="error login_form">{this.props.password_error}</p>
           )}
         </div>
         {this.props.flag && (
@@ -59,6 +59,9 @@ export default class Form extends React.Component {
             value="SUBMIT"
             disabled={this.props.flag}
           />
+        )}
+        {this.props.detail_error && (
+          <p className="error login_form">{this.props.detail_error}</p>
         )}
       </form>
     );
