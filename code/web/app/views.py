@@ -43,7 +43,9 @@ from .models import (
 from .config.view_auth import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework import routers, viewsets, generics, serializers, filters, authentication, permissions
+from .config.auth import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import (
@@ -100,9 +102,35 @@ def error_404(request):
 
     return render(request, '404.html', contexts, status=404)
 
-# def renderTOP(request):
+# class UserInfo(APIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
 
-#     return redirect("")
+#     def get(self, request):
+#         user = self.request.user
+#         print(user.id)
+#         return Response(data={
+#             "status": True,
+#             'username': user.username,
+#             "item": "logout"
+#         },
+#         status=201)
+
+class UserInfo(generics.RetrieveAPIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (JSONWebTokenAuthentication,)
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def get(self, request, format=None):
+        print("self.request")
+        print(self.request.user.id)
+        return Response(data={
+            "status": True,
+            'username': request.user.username,
+            "item": "logout"
+        },
+        status=201)
 
 def passwordChecker(data):
     if data["password"] != data["password_check"]:
@@ -122,6 +150,7 @@ def ErrorFlag(data):
 def testAPI(request):
     if request.method == "POST":
         data = JSONParser().parse(request)
+        print(data)
         if ErrorFlag(data) is True:
             checker = passwordChecker(data)
             if not checker :
@@ -130,16 +159,23 @@ def testAPI(request):
             data["password"] = data.pop("password_check")
             serializer = CreateUserSerializer(data=data)
             if serializer.is_valid():
+                print(data)
                 serializer.save()
                 return JsonResponse(serializer.data, status=201)
             return JsonResponse(data = {"status": False, "message": serializer.errors}, status=500)
         else:
+            user = User.objects.filter(is_active = True)
+            print("data")
             print(data)
-            user = User.objects.filter(is_active = True, username = data["name"])
-            if user.first():
-                return JsonResponse(data = {"status": False, "message": "このユーザー名はすでに使用されています"}, status=500)
-            else:
-                return JsonResponse(data = {"status": True}, status=201)
+            for key, value in data.items():
+                if key == "name":
+                    if user.filter(username = data["name"]).first():
+                        return JsonResponse(data = {"status": False, "label": "username_error", "message": "このユーザー名はすでに使用されています"}, status=500)
+                elif key == "email":
+                    if user.filter(email = data["email"]).first():
+                        return JsonResponse(data = {"status": False, "label" : "email_error", "message": "このメールアドレスはすでに使用されています"}, status=500)
+
+            return JsonResponse(data = {"status": True}, status=201)
 
 class SearchGETAPI(generics.ListAPIView):
     queryset = User.objects.all()
@@ -179,11 +215,11 @@ class Test(generic.ListView):
         return render(self.request, self.template_name)
 
 class TestAPI(generics.ListAPIView):
-
     queryset = Todo.objects.all()
     serializer_class = TodoSerializer
 
 class TestGETAPI(generics.ListAPIView):
+    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -193,22 +229,36 @@ class Login(ObtainAuthToken):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
         print(serializer.is_valid())
-        print(request.data)
-        print(serializer)
         if serializer.is_valid():
             user = serializer.validated_data['user']
             token, created = Token.objects.get_or_create(user=user)
-            print(user)
-            print(created)
-            print(token)
-            xasca
+            # login(self.request, user)
+
             return Response({
+                "status": True,
                 'token': token.key,
                 'user_id': user.pk,
-                'email': user.email
+                'email': user.email,
+                "password": request.data["password"]
             }, status=201)
-        print("serializer.errors")
-        print(serializer.errors)
+
         return Response(data = {"status": False, "message": serializer.errors}, status=500 )
 
+class Logout(APIView):
+    def get(self, request, format=None):
+        request.user.auth_token.delete()
+        return Response(status=status.HTTP_200_OK)
 
+class UserRegister(generics.CreateAPIView):
+    permission_classes = (permissions.AllowAny,)
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    @transaction.atomic
+    def post(self, request, format=None):
+        print(request.data)
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

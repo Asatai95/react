@@ -10,6 +10,8 @@ from django.contrib import *
 from django.db import models
 
 from django.db.backends.mysql.base import DatabaseWrapper
+# from datetime import datetime, timedelta
+import datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -115,7 +117,6 @@ rest_frameworkで/static/rest_frameworkの404エラーが発生した場合は�
 """
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-print(STATIC_ROOT)
 
 # mediaフォルダを用意した場合に使用
 # MEDIA_URL = '/media/'
@@ -126,7 +127,9 @@ AUTH_USER_MODEL = 'app.User'
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_NAME = "csrftoken"
+CSRF_COOKIE_NAME = "myapptodo"
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 3600 * 24 * 30 * 365 #1年単位
 
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
@@ -134,20 +137,21 @@ CORS_ORIGIN_WHITELIST = (
 )
 
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
-JWT_AUTH = {
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': "JWT",
     'JWT_VERIFY_EXPIRATION': False,
-    'JWT_AUTH_HEADER_PREFIX': 'JWT',
 }
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
         'rest_framework.permissions.IsAuthenticated',
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
     ),
     "DEFAULT_AUTHENTICATION_CLASSES": (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
     'NON_FIELD_ERRORS_KEY': 'detail',

@@ -6,6 +6,7 @@ import Form from './js/Form';
 import UserList from './js/UserList';
 import Search from './js/SearchForm';
 import {header, RouteURL} from "../assets/Config";
+import Cookies from 'js-cookie';
 // import Router from "./js/Router";
 // import moment from "moment";
 
@@ -201,9 +202,15 @@ class App extends Component {
     });
   }
 
+
   componentDidMount() {
-    axios.get(RouteURL() + '/test_api/profile/list/')
+    var token = Cookies.get('myapp');
+    // header["Content-Type"] = "application/json"
+    header["Authorization"] = "JWT["+token+"]"
+    axios.get(RouteURL() + '/test_api/profile/list/', header)
     .then(response => {
+      console.log("response")
+      console.log(response)
       this.setState({
         users: response.data.reverse(),
         usersLength: response.data.length,
@@ -211,8 +218,8 @@ class App extends Component {
       });
     })
     .catch((error) => {
+      console.log(error.response)
       console.error(error)
-      // window.location.href = RouteURL() + "/error/";
     });
   }
 

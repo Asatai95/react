@@ -12,6 +12,7 @@ from .url_config.url_config import *
 
 from rest_framework import routers
 from django.views.decorators.cache import cache_page
+from rest_framework_jwt.views import obtain_jwt_token
 
 app_name = 'web.app'
 register_converter(FourDigitYearConverter, "pk")
@@ -25,8 +26,12 @@ urlpatterns = [
     path('test_api/profile/list/search/', views.SearchGETAPI.as_view()),
     path('test_api/profile/list/search/<str:params>', views.SearchGETAPI.as_view()),
     path("error/", views.error_404, name="error404"),
+    path("userauth/", obtain_jwt_token),
+    path("userinfo/", views.UserInfo.as_view()),
     path("login/", views.Login.as_view(), name='login'),
     path("login/api/", views.Login.as_view()),
+    path("logout/", views.Logout.as_view(), name='logout'),
+    path("user/create/", views.UserRegister.as_view(), name='create'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

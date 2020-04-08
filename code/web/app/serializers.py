@@ -17,12 +17,23 @@ class UserFilter(serializers.ModelSerializer):
 
     class Meta:
         model = User
+        fields = '__all__'
         fields = ("username", "start_date", "end_date")
+        extra_kwargs = {
+            "username": {"required" : False},
+            'start_date': {'required': False},
+            "end_date": {"required" : False}
+        }
 
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=False)
+
     class Meta:
         model = User
         fields = ('id', 'username', 'password', 'email', "message", 'date_joined')
+
+    def create(self, validated_data):
+        return User.objects.create_user(request_data=validated_data)
 
 class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:

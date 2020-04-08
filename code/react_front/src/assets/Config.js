@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import NotFound from '../404'
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 export const Router = () => (
     <BrowserRouter>
@@ -43,4 +45,22 @@ export const userList = (response) => {
 // ログイン画面のclassName変更
 export const ClassContainer = () => {
     document.getElementById('root').className= "container-main-back"
+}
+
+export const UserAuth = (email, password) => {
+    const d = {
+        "email": email,
+        "password": password
+    }
+    var token = Cookies.get('myapptodo');
+    header["Content-Type"] = "application/json"
+    header["Authorization"] = "JWT["+token+"]"
+    axios.post(RouteURL() + '/userauth/', d, header)
+    .then((response) => {
+        console.log(response)
+        Cookies.set("myapp", response.data.token);
+    })
+    .catch((error) => {
+        console.log(error.response)
+    });
 }
