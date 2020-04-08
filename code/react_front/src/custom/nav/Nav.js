@@ -40,8 +40,6 @@ class Header extends Component {
 
     render(){
 
-        console.log(this.state)
-
         return(
             <div className="container">
                 <div className="navbar-brand">

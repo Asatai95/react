@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 import './register.css';
 import Form from "./js/Form";
 import Check from "./js/Check";
 import axios from 'axios';
 import Validation from '../Validation';
 import {header, RouteURL, ClassContainer} from "../assets/Config";
+import Cookies from 'js-cookie';
 
 class Register extends Component {
     constructor(props) {
@@ -31,8 +32,6 @@ class Register extends Component {
 
     handleChange(event) {
         var value = event.target.value.trim();
-        console.log("event.target")
-        console.log(event.target)
         if (event.target.name === 'name') {
           this.setState({
             username: value,
@@ -59,7 +58,6 @@ class Register extends Component {
           if (this.state.password_check){
             if (this.state.password_check !== event.target.value) {
               if (Validation.formValidate(event.target.name, value) === "") {
-                console.log("cevent.target.name,")
                 this.setState({
                   password: value,
                   password_error: "パスワードは確認用と同じ値を入力してください"
@@ -110,28 +108,64 @@ class Register extends Component {
 
       checkButton(event) {
           event.preventDefault();
-          const LodingIcon = React.createClass({
-              render(){
-                return (
-                    <div id="loadicon" className="loader"></div>
-                );
-              }
+          const conf = {
+            'username': this.state.username,
+            'email': this.state.email,
+            "password": this.state.password,
+          };
+          axios.post(RouteURL() + "/user/info/session/", conf, header)
+          .then((response) => {
+            Cookies.set("username", response.data.username);
+            Cookies.set("password", response.data.password);
+            Cookies.set("email", response.data.email);
           });
-          console.log("event")
-          console.log(event)
-          ReactDOM.render(
-            <LodingIcon />,
-            document.getElementById('loading')
-          );
+          var flag_ch_flag;
+          var obj = document.getElementById("loading");
+          var sns = document.getElementById("sns");
+          obj.classList.add("active");
+          var element = document.getElementById('loading');
+          element.innerHTML = '<div id="loadicon" class="loader"></div>'
           const item =  () => {
+            if (this.state.flag_ch === false){
+              flag_ch_flag = true;
+              sns.classList.add("fadeout");
+            } else {
+              flag_ch_flag = false;
+              sns.classList.remove("fadeout");
+            }
             this.setState({
-                "flag_ch": true,
+                "flag_ch": flag_ch_flag,
             })
-            // const block = document.getElementById("loading");
-	          // block.removeChild("loadicon");
+            obj.classList.remove("active");
+            const block = document.getElementById("loading");
+            const broccoli = block.lastElementChild;
+	          block.removeChild(broccoli);
           }
           setTimeout(item, 2000);
+      }
 
+      componentDidMount(){
+        const d = {
+          "username": Cookies.get("username"),
+          "password": Cookies.get("password"),
+          "email": Cookies.get("email"),
+        }
+        console.log(d)
+        axios.get(RouteURL() + "/user/info/session/", d, header)
+        .then((response) =>{
+          console.log(response)
+          if (response.data.username !== null){
+
+            this.setState({
+              "username": response.data.username,
+              "password": response.data.password,
+              "password_check": response.data.password_check,
+              "email": response.data.email,
+              "flag_ch": true,
+            })
+
+          }
+        });
       }
 
       handleSubmit(event) {
@@ -186,7 +220,6 @@ class Register extends Component {
         }
 
         ClassContainer()
-        console.log(this.state)
 
         return(
             <div className="main-content-type">
@@ -194,7 +227,7 @@ class Register extends Component {
                     <div className="card register">
                         <div className="card-header">
                             <h3>Sign Up</h3>
-                            <div className="d-flex justify-content-end social_icon">
+                            <div id="sns" className="d-flex justify-content-end social_icon">
                                 <span><i className="fab fa-facebook-square"></i></span>
                                 <span><i className="fab fa-google-plus-square"></i></span>
                                 <span><i className="fab fa-twitter-square"></i></span>
@@ -206,6 +239,7 @@ class Register extends Component {
                                     username={this.state.username}
                                     email={this.state.email}
                                     password={this.state.password}
+                                    password_check={this.state.password_check}
                                     username_error={this.state.username_error}
                                     email_error={this.state.email_error}
                                     password_error={this.state.password_error}

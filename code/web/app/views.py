@@ -18,6 +18,7 @@ import hmac
 import secrets
 import random
 from django.utils.encoding import force_bytes
+from django.contrib.sessions.backends.db import SessionStore
 
 from multiprocessing import Process
 import time
@@ -150,7 +151,6 @@ def ErrorFlag(data):
 def testAPI(request):
     if request.method == "POST":
         data = JSONParser().parse(request)
-        print(data)
         if ErrorFlag(data) is True:
             checker = passwordChecker(data)
             if not checker :
@@ -159,14 +159,11 @@ def testAPI(request):
             data["password"] = data.pop("password_check")
             serializer = CreateUserSerializer(data=data)
             if serializer.is_valid():
-                print(data)
                 serializer.save()
                 return JsonResponse(serializer.data, status=201)
             return JsonResponse(data = {"status": False, "message": serializer.errors}, status=500)
         else:
             user = User.objects.filter(is_active = True)
-            print("data")
-            print(data)
             for key, value in data.items():
                 if key == "name":
                     if user.filter(username = data["name"]).first():
@@ -176,6 +173,54 @@ def testAPI(request):
                         return JsonResponse(data = {"status": False, "label" : "email_error", "message": "このメールアドレスはすでに使用されています"}, status=500)
 
             return JsonResponse(data = {"status": True}, status=201)
+
+@csrf_exempt
+def UserCreatAuth(request):
+    print(request.method)
+    tmp_list = []
+    if request.method == "POST":
+        data = JSONParser().parse(request)
+        if ErrorFlag(data) is True:
+            print(data)
+            tmp_list = []
+            s = SessionStore()
+            s["username"] = data["username"]
+            s.create()
+            username = s.session_key
+            s["password"] = data["password"]
+            s.create()
+            password = s.session_key
+            s["email"] = data["email"]
+            s.create()
+            email = s.session_key
+            s.save()
+            d = {
+                "username": username,
+                "password": password,
+                "email": email
+            }
+            return JsonResponse(data = d, status=201)
+    elif request.method == "GET":
+        username = request.GET.get("username")
+        print("usndl")
+        print(username)
+        data = JSONParser().parse(request)
+        print("data")
+        print(data)
+        casc
+        username = SessionStore(session_key=data["username"])["username"]
+        print("username")
+        print(username)
+        password = SessionStore(session_key=data["password"])["password"]
+        email = SessionStore(session_key=data["email"])["email"]
+        d = {
+            "username": username,
+            "password": password,
+            "email": email
+        }
+        print("d")
+        print(d)
+        return JsonResponse(data = d, status=201)
 
 class SearchGETAPI(generics.ListAPIView):
     queryset = User.objects.all()
