@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import './register.css';
 import Form from "./js/Form";
 import Check from "./js/Check";
@@ -55,9 +56,6 @@ class Register extends Component {
             password: value,
             password_error: Validation.formValidate(event.target.name, value)
           });
-
-          console.log(Validation.formValidate(event.target.name, value))
-          console.log(value)
           if (this.state.password_check){
             if (this.state.password_check !== event.target.value) {
               if (Validation.formValidate(event.target.name, value) === "") {
@@ -112,9 +110,28 @@ class Register extends Component {
 
       checkButton(event) {
           event.preventDefault();
-          this.setState({
-              "flag_ch": true,
-          })
+          const LodingIcon = React.createClass({
+              render(){
+                return (
+                    <div id="loadicon" className="loader"></div>
+                );
+              }
+          });
+          console.log("event")
+          console.log(event)
+          ReactDOM.render(
+            <LodingIcon />,
+            document.getElementById('loading')
+          );
+          const item =  () => {
+            this.setState({
+                "flag_ch": true,
+            })
+            // const block = document.getElementById("loading");
+	          // block.removeChild("loadicon");
+          }
+          setTimeout(item, 2000);
+
       }
 
       handleSubmit(event) {
@@ -169,6 +186,7 @@ class Register extends Component {
         }
 
         ClassContainer()
+        console.log(this.state)
 
         return(
             <div className="main-content-type">
@@ -205,6 +223,7 @@ class Register extends Component {
                                     username={this.state.username}
                                     email={this.state.email}
                                     password={this.state.password}
+                                    checkButton={this.checkButton}
                                 />
                             )}
                         </div>

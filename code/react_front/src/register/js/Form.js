@@ -73,7 +73,7 @@ export default class Form extends React.Component {
         </div>
         <div className="register_button_box">
             <input
-                className="button is-fullwidth .bg-light is-outlined register"
+                className="button is-fullwidth bg-light is-outlined register"
                 type="button"
                 value="BACK"
             />
@@ -91,7 +91,7 @@ export default class Form extends React.Component {
                 type="button"
                 value="CHECK"
                 disabled={this.props.flag}
-
+                onClick={this.props.checkButton}
             />
             )}
         </div>
