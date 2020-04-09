@@ -38,6 +38,10 @@ form .register_button_box .button.is-fullwidth {
 
 /* チェック画面 */
 
+#post-data .field {
+    margin-bottom: 25px;
+}
+
 form .field .control.check_user {
     display: flex;
     align-items: center;

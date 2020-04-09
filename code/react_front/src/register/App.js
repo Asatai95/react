@@ -29,192 +29,197 @@ class Register extends Component {
         this.handleChange = this.handleChange.bind(this)
         this.onBlurFunc = this.onBlurFunc.bind(this)
         this.Loading = this.Loading.bind(this)
+        this.backbt = this.backbt.bind(this)
     }
 
     handleChange(event) {
-        var value = event.target.value.trim();
-        if (event.target.name === 'name') {
-          this.setState({
-            username: value,
-            username_error: Validation.formValidate(event.target.name, value)
-          });
-        }
-        else if (event.target.name === 'email') {
-          this.setState({
-            email: value,
-            email_error: Validation.formValidate(event.target.name, value)
-          });
-        }
-        else if (event.target.name === 'message') {
-          this.setState({
-            message: value,
-            message_error: Validation.formValidate(event.target.name, value)
-          });
-        }
-        else if (event.target.name === 'password') {
-          this.setState({
-            password: value,
-            password_error: Validation.formValidate(event.target.name, value)
-          });
-          if (this.state.password_check){
-            if (this.state.password_check !== event.target.value) {
-              if (Validation.formValidate(event.target.name, value) === "") {
-                this.setState({
-                  password: value,
-                  password_error: "パスワードは確認用と同じ値を入力してください"
-                });
-              } else {
-                this.setState({
-                  password_error: ""
-                });
-              }
-            }
-          }
-        }
-        else if (event.target.name === 'password_check') {
-          this.setState({
-            password_check: value,
-            password_check_error: Validation.formValidate(event.target.name, event.target.value)
-          });
-
-          if (this.state.password){
-            if (event.target.value !== this.state.password) {
-              if (Validation.formValidate(event.target.name, value) === "") {
-                this.setState({
-                  password_check: value,
-                  password_check_error: "パスワードは確認用と同じ値を入力してください"
-                });
-              }
-            }
-          }
-        }
-      }
-
-      onBlurFunc(event){
-        var value = event.target.value.trim();
-        var conf = {
-          "label": "check",
-          [event.target.name]: value
-        }
-        axios.post(RouteURL() + "/test_api/profile/", conf, header)
-        .catch((error) => {
-            console.log(error.response.data)
-            var value = error.response.data.message
-            var label = error.response.data.label
-            this.setState({
-              [label]: value,
-            });
+      var value = event.target.value.trim();
+      if (event.target.name === 'name') {
+        this.setState({
+          username: value,
+          username_error: Validation.formValidate(event.target.name, value)
         });
       }
-
-      Loading(flag, info){
-        var flag_ch_flag;
-        var obj = document.getElementById("loading");
-        var sns = document.getElementById("sns");
-        obj.classList.add("active");
-        var element = document.getElementById('loading');
-        element.innerHTML = '<div id="loadicon" class="loader"></div>'
-        const item =  () => {
-          if (this.state.flag_ch === false){
-            flag_ch_flag = true;
-            sns.classList.add("fadeout");
-          } else {
-            flag_ch_flag = false;
-            sns.classList.remove("fadeout");
-          }
-          if (flag === undefined){
-            this.setState({
-                "flag_ch": flag_ch_flag,
-            })
-          } else {
-            this.setState({
-              "flag_ch": flag,
-          })
-          }
-          obj.classList.remove("active");
-          const block = document.getElementById("loading");
-          const broccoli = block.lastElementChild;
-          block.removeChild(broccoli);
-        }
-        setTimeout(item, 2000);
+      else if (event.target.name === 'email') {
+        this.setState({
+          email: value,
+          email_error: Validation.formValidate(event.target.name, value)
+        });
       }
-
-      checkButton(event) {
-          event.preventDefault();
-          const conf = {
-            'username': this.state.username,
-            'email': this.state.email,
-            "password": this.state.password,
-          };
-          axios.post(RouteURL() + "/user/info/session/", conf, header)
-          .then((response) => {
-            Cookies.set("username", response.data.username);
-            Cookies.set("password", response.data.password);
-            Cookies.set("email", response.data.email);
-          });
-          this.Loading()
+      else if (event.target.name === 'message') {
+        this.setState({
+          message: value,
+          message_error: Validation.formValidate(event.target.name, value)
+        });
       }
-
-      componentDidMount(){
-        const d = {
-          "username": Cookies.get("username"),
-          "password": Cookies.get("password"),
-          "email": Cookies.get("email"),
-        }
-        if (Cookies.get("username") !== undefined){
-          axios.get(RouteURL() + "/user/info/session/", { params: d }, header)
-          .then((response) =>{
-            if (response.data.username !== null){
+      else if (event.target.name === 'password') {
+        this.setState({
+          password: value,
+          password_error: Validation.formValidate(event.target.name, value)
+        });
+        if (this.state.password_check){
+          if (this.state.password_check !== event.target.value) {
+            if (Validation.formValidate(event.target.name, value) === "") {
               this.setState({
-                "username": response.data.username,
-                "password": response.data.password,
-                "password_check": response.data.password,
-                "email": response.data.email,
-              })
-            }
-          });
-          this.Loading(true)
-        } else {
-          if (this.state.flag_ch === true){
-            window.location.href = "/login";
-          }
-        }
-      }
-
-      handleSubmit(event) {
-        event.preventDefault();
-
-        const { username, email, password } = this.state;
-        const conf = {
-          'username': username,
-          'email': email,
-          "password": password,
-        };
-        axios.post(RouteURL() + "/user/create/", conf, header)
-        .then(response => {
-          console.log(response)
-          window.location.href = "/login";
-        })
-        .catch((error) => {
-          console.log(error.response)
-          if (error.response !== undefined){
-            if (error.response.data.detail !== undefined){
-              this.setState({
-                "detail_error": error.response.data.detail,
+                password: value,
+                password_error: "パスワードは確認用と同じ値を入力してください"
               });
             } else {
-              var label = Object.keys(error.response.data.message)
-              for (var i = 0 ; i < label.length; i++){
-                var value = error.response.data.message[label[i]]
-                var error_label = label[i] + "_error"
-                this.setState({
-                  [error_label]: value,
-                });
-              }
+              this.setState({
+                password_error: ""
+              });
             }
           }
-        });
+        }
       }
+      else if (event.target.name === 'password_check') {
+        this.setState({
+          password_check: value,
+          password_check_error: Validation.formValidate(event.target.name, event.target.value)
+        });
+        if (this.state.password){
+          if (event.target.value !== this.state.password) {
+            if (Validation.formValidate(event.target.name, value) === "") {
+              this.setState({
+                password_check: value,
+                password_check_error: "パスワードは確認用と同じ値を入力してください"
+              });
+            }
+          }
+        }
+      }
+    }
+
+    onBlurFunc(event){
+      var value = event.target.value.trim();
+      var conf = {
+        "label": "check",
+        [event.target.name]: value
+      }
+      axios.post(RouteURL() + "/test_api/profile/", conf, header)
+      .catch((error) => {
+          console.log(error.response.data)
+          var value = error.response.data.message
+          var label = error.response.data.label
+          this.setState({
+            [label]: value,
+          });
+      });
+    }
+
+    Loading(flag){
+      var flag_ch_flag;
+      var obj = document.getElementById("loading");
+      var sns = document.getElementById("sns");
+      obj.classList.add("active");
+      var element = document.getElementById('loading');
+      element.innerHTML = '<div id="loadicon" class="loader"></div>'
+      const item =  () => {
+        if (this.state.flag_ch === false){
+          flag_ch_flag = true;
+          sns.classList.add("fadeout");
+        } else {
+          flag_ch_flag = false;
+          sns.classList.remove("fadeout");
+        }
+        if (flag === undefined){
+          this.setState({
+              "flag_ch": flag_ch_flag,
+          })
+        } else {
+          this.setState({
+            "flag_ch": flag,
+        })
+        }
+        obj.classList.remove("active");
+        const block = document.getElementById("loading");
+        const broccoli = block.lastElementChild;
+        block.removeChild(broccoli);
+      }
+      setTimeout(item, 2000);
+    }
+
+    checkButton(event) {
+        event.preventDefault();
+        const conf = {
+          'username': this.state.username,
+          'email': this.state.email,
+          "password": this.state.password,
+        };
+        axios.post(RouteURL() + "/user/info/session/", conf, header)
+        .then((response) => {
+          Cookies.set("username", response.data.username);
+          Cookies.set("password", response.data.password);
+          Cookies.set("email", response.data.email);
+        });
+        this.Loading()
+    }
+    componentDidMount(){
+      const d = {
+        "username": Cookies.get("username"),
+        "password": Cookies.get("password"),
+        "email": Cookies.get("email"),
+      }
+      if (Cookies.get("username") !== undefined){
+        axios.get(RouteURL() + "/user/info/session/", { params: d }, header)
+        .then((response) =>{
+          if (response.data.username !== null){
+            this.setState({
+              "username": response.data.username,
+              "password": response.data.password,
+              "password_check": response.data.password,
+              "email": response.data.email,
+            })
+          }
+        });
+        this.Loading(true)
+      } else {
+        if (this.state.flag_ch === true){
+          window.location.href = "/login";
+        }
+      }
+    }
+
+    handleSubmit(event) {
+      event.preventDefault();
+      const { username, email, password } = this.state;
+      const conf = {
+        'username': username,
+        'email': email,
+        "password": password,
+      };
+      this.Loading(true)
+      axios.post(RouteURL() + "/user/create/", conf, header)
+      .then(response => {
+        window.location.href = "/login";
+      })
+      .catch((error) => {
+        console.log(error.response)
+        if (error.response !== undefined){
+          if (error.response.data.detail !== undefined){
+            this.setState({
+              "detail_error": error.response.data.detail,
+            });
+          } else {
+            var label = Object.keys(error.response.data.message)
+            for (var i = 0 ; i < label.length; i++){
+              var value = error.response.data.message[label[i]]
+              var error_label = label[i] + "_error"
+              this.setState({
+                [error_label]: value,
+              });
+            }
+          }
+        }
+      });
+    }
+
+    backbt(){
+      Cookies.remove("username")
+      Cookies.remove("password")
+      Cookies.remove("email")
+      window.location.href = "/login";
+    }
 
     render(){
 
@@ -258,6 +263,7 @@ class Register extends Component {
                                     handleChange={this.handleChange}
                                     onBlurFunc={this.onBlurFunc}
                                     checkButton={this.checkButton}
+                                    backbt={this.backbt}
                                     flag={flag_label}
                                 />
                             )}

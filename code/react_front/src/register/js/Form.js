@@ -76,6 +76,7 @@ export default class Form extends React.Component {
                 className="button is-fullwidth bg-light is-outlined register"
                 type="button"
                 value="BACK"
+                onClick={this.props.backbt}
             />
             {this.props.flag && (
             <input

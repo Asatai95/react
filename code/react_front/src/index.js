@@ -24,6 +24,6 @@ const route = (
 
 ReactDOM.render(route, document.getElementById('root'));
 
-ReactDOM.render(<Header />, document.getElementById('navbar-main'));
+ReactDOM.render(<Header />, document.getElementById('nav_container'));
 
 serviceWorker.unregister();

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './login.css';
 import Form from "./js/Form";
-import PopAPP from "./js/popup";
+import POPUPbutton from "./js/modal";
 import axios from 'axios';
 import Validation from '../Validation';
 import {header, RouteURL, ClassContainer, UserAuth} from "../assets/Config";
@@ -22,6 +22,7 @@ class Login extends Component {
 
         this.handleSubmit = this.handleSubmit.bind(this)
         this.handleChange = this.handleChange.bind(this)
+        this.model = React.createRef()
     }
 
     handleChange(event) {
@@ -60,11 +61,8 @@ class Login extends Component {
             Cookies.remove("username")
             Cookies.remove("password")
             Cookies.remove("email")
+            ReactDOM.render(<POPUPbutton />, document.getElementById('popupwin'));
         }
-        ReactDOM.render(
-          <PopAPP />,
-          document.getElementById('navbar-main')
-        );
     }
 
     handleSubmit(event) {

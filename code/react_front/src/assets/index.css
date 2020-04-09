@@ -175,3 +175,58 @@ code {
     height: 5em;
   }
 }
+
+/* ポップうウィンドウ */
+#popupwin {
+  position: absolute;
+  width: 95%;
+  height: 72px;
+  top: 0;
+  margin: auto;
+}
+
+#popupwin .popup {
+  display: flex;
+  width: 95%;
+  margin: auto;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0, 136,51, .8);
+  padding: 40px;
+  border-radius: 5px;
+  position: relative;
+}
+
+#popupwin .popup p {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+}
+
+#popupwin .popup button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  position: absolute;
+  right: 30px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+#popupwin .popup button i:hover {
+  font-size: 38px;
+}
+
+#popupwin .popup button i {
+  color : #fff;
+  font-size: 35px;
+}
+
+#popupwin .sZvhI {
+  background: unset;
+  border-top-left-radius: unset;
+  border-top-right-radius: unset;
+  box-shadow: unset;
+}

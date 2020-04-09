@@ -15,7 +15,6 @@ class Header extends Component {
     }
 
     componentDidMount() {
-        // const idol = Cookies.get('myapptodo');
 
         axios.get(RouteURL() + "/userinfo/", header)
         .then(response => {
@@ -41,28 +40,26 @@ class Header extends Component {
     render(){
 
         return(
-            <div className="container">
-                <div className="navbar-brand">
-                  <a className="navbar-item" href="/">
-                    MY TODO APP
-                  </a>
 
-                  <div className="user_auth">
-                    <p>{this.state.user}</p>
-                  </div>
-
-                  <a role="button" href="/#" className="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-                    <span aria-hidden="true"></span>
-                    <span aria-hidden="true"></span>
-                    <span aria-hidden="true"></span>
-                  </a>
-                  <ul className="navbar-nav mr-auto">
-                    <li className="navbar-item">
-                      <a className={this.state.class} href={this.state.url}>{this.state.label}</a>
-                    </li>
-                  </ul>
+            <div className="navbar-brand">
+                <a className="navbar-item" href="/">
+                  MY TODO APP
+                </a>
+                <div className="user_auth">
+                  <p>{this.state.user}</p>
                 </div>
+                <a role="button" href="/#" className="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+                <ul className="navbar-nav mr-auto">
+                  <li className="navbar-item">
+                    <a className={this.state.class} href={this.state.url}>{this.state.label}</a>
+                  </li>
+                </ul>
             </div>
+
         );
     }
 }
