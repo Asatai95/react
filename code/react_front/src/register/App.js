@@ -28,6 +28,7 @@ class Register extends Component {
         this.handleSubmit = this.handleSubmit.bind(this)
         this.handleChange = this.handleChange.bind(this)
         this.onBlurFunc = this.onBlurFunc.bind(this)
+        this.Loading = this.Loading.bind(this)
     }
 
     handleChange(event) {
@@ -106,6 +107,38 @@ class Register extends Component {
         });
       }
 
+      Loading(flag, info){
+        var flag_ch_flag;
+        var obj = document.getElementById("loading");
+        var sns = document.getElementById("sns");
+        obj.classList.add("active");
+        var element = document.getElementById('loading');
+        element.innerHTML = '<div id="loadicon" class="loader"></div>'
+        const item =  () => {
+          if (this.state.flag_ch === false){
+            flag_ch_flag = true;
+            sns.classList.add("fadeout");
+          } else {
+            flag_ch_flag = false;
+            sns.classList.remove("fadeout");
+          }
+          if (flag === undefined){
+            this.setState({
+                "flag_ch": flag_ch_flag,
+            })
+          } else {
+            this.setState({
+              "flag_ch": flag,
+          })
+          }
+          obj.classList.remove("active");
+          const block = document.getElementById("loading");
+          const broccoli = block.lastElementChild;
+          block.removeChild(broccoli);
+        }
+        setTimeout(item, 2000);
+      }
+
       checkButton(event) {
           event.preventDefault();
           const conf = {
@@ -119,29 +152,7 @@ class Register extends Component {
             Cookies.set("password", response.data.password);
             Cookies.set("email", response.data.email);
           });
-          var flag_ch_flag;
-          var obj = document.getElementById("loading");
-          var sns = document.getElementById("sns");
-          obj.classList.add("active");
-          var element = document.getElementById('loading');
-          element.innerHTML = '<div id="loadicon" class="loader"></div>'
-          const item =  () => {
-            if (this.state.flag_ch === false){
-              flag_ch_flag = true;
-              sns.classList.add("fadeout");
-            } else {
-              flag_ch_flag = false;
-              sns.classList.remove("fadeout");
-            }
-            this.setState({
-                "flag_ch": flag_ch_flag,
-            })
-            obj.classList.remove("active");
-            const block = document.getElementById("loading");
-            const broccoli = block.lastElementChild;
-	          block.removeChild(broccoli);
-          }
-          setTimeout(item, 2000);
+          this.Loading()
       }
 
       componentDidMount(){
@@ -150,57 +161,56 @@ class Register extends Component {
           "password": Cookies.get("password"),
           "email": Cookies.get("email"),
         }
-        console.log(d)
-        axios.get(RouteURL() + "/user/info/session/", d, header)
-        .then((response) =>{
-          console.log(response)
-          if (response.data.username !== null){
-
-            this.setState({
-              "username": response.data.username,
-              "password": response.data.password,
-              "password_check": response.data.password_check,
-              "email": response.data.email,
-              "flag_ch": true,
-            })
-
+        if (Cookies.get("username") !== undefined){
+          axios.get(RouteURL() + "/user/info/session/", { params: d }, header)
+          .then((response) =>{
+            if (response.data.username !== null){
+              this.setState({
+                "username": response.data.username,
+                "password": response.data.password,
+                "password_check": response.data.password,
+                "email": response.data.email,
+              })
+            }
+          });
+          this.Loading(true)
+        } else {
+          if (this.state.flag_ch === true){
+            window.location.href = "/login";
           }
-        });
+        }
       }
 
       handleSubmit(event) {
         event.preventDefault();
 
-        const { name, email, password } = this.state;
+        const { username, email, password } = this.state;
         const conf = {
-          'username': name,
+          'username': username,
           'email': email,
           "password": password,
         };
-
         axios.post(RouteURL() + "/user/create/", conf, header)
         .then(response => {
-          this.state.users.unshift(response.data);
-          this.setState({
-            users: this.state.users,
-            usersLength: this.state.users.length,
-            name: "",
-            email: "",
-            password: "",
-          });
+          console.log(response)
+          window.location.href = "/login";
         })
         .catch((error) => {
+          console.log(error.response)
           if (error.response !== undefined){
-            var label = Object.keys(error.response.data.message)
-            for (var i = 0 ; i < label.length; i++){
-              var value = error.response.data.message[label[i]]
-              if (label[i] === "username"){
-                label[i] = "name"
-              }
-              var error_label = label[i] + "_error"
+            if (error.response.data.detail !== undefined){
               this.setState({
-                [error_label]: value,
+                "detail_error": error.response.data.detail,
               });
+            } else {
+              var label = Object.keys(error.response.data.message)
+              for (var i = 0 ; i < label.length; i++){
+                var value = error.response.data.message[label[i]]
+                var error_label = label[i] + "_error"
+                this.setState({
+                  [error_label]: value,
+                });
+              }
             }
           }
         });
@@ -246,7 +256,6 @@ class Register extends Component {
                                     password_check_error={this.state.password_check_error}
                                     detail_error={this.state.detail_error}
                                     handleChange={this.handleChange}
-                                    handleSubmit={this.handleSubmit}
                                     onBlurFunc={this.onBlurFunc}
                                     checkButton={this.checkButton}
                                     flag={flag_label}
@@ -258,6 +267,8 @@ class Register extends Component {
                                     email={this.state.email}
                                     password={this.state.password}
                                     checkButton={this.checkButton}
+                                    handleSubmit={this.handleSubmit}
+                                    checkALL={this.checkALL}
                                 />
                             )}
                         </div>

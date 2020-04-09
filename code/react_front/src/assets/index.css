@@ -78,7 +78,7 @@ code {
 /* ローディングアイコン */
 
 .fadeout {
-  animation : fadeOut .5s;
+  animation : fadeOut .3s;
   animation-fill-mode: both;
 }
 
@@ -116,7 +116,9 @@ code {
   animation: load1 1s infinite ease-in-out;
   width: 1em;
   height: 4em;
+  border: none!important;
 }
+
 .loader {
   color: #ffffff;
   text-indent: -9999em;
@@ -129,20 +131,25 @@ code {
   -webkit-animation-delay: -0.16s;
   animation-delay: -0.16s;
 }
+
 .loader:before,
 .loader:after {
   position: absolute;
   top: 0;
   content: '';
+  border-radius: 290486px;
 }
+
 .loader:before {
   left: -1.5em;
   -webkit-animation-delay: -0.32s;
   animation-delay: -0.32s;
 }
+
 .loader:after {
   left: 1.5em;
 }
+
 @-webkit-keyframes load1 {
   0%,
   80%,
@@ -155,6 +162,7 @@ code {
     height: 5em;
   }
 }
+
 @keyframes load1 {
   0%,
   80%,

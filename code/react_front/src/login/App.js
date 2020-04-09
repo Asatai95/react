@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import './login.css';
 import Form from "./js/Form";
+import PopAPP from "./js/popup";
 import axios from 'axios';
 import Validation from '../Validation';
 import {header, RouteURL, ClassContainer, UserAuth} from "../assets/Config";
@@ -51,6 +53,18 @@ class Login extends Component {
           password: value,
         });
       }
+    }
+
+    componentDidMount(){
+        if (Cookies.get("username") !== undefined){
+            Cookies.remove("username")
+            Cookies.remove("password")
+            Cookies.remove("email")
+        }
+        ReactDOM.render(
+          <PopAPP />,
+          document.getElementById('navbar-main')
+        );
     }
 
     handleSubmit(event) {
@@ -123,7 +137,7 @@ class Login extends Component {
                         </div>
                         <div className="card-footer">
                             <div className="d-flex justify-content-center links">
-                                Don't have an account?<a href="/#">Sign Up</a>
+                                Don't have an account?<a href="/user/create/">Sign Up</a>
                             </div>
                             <div className="d-flex justify-content-center">
                                 <a href="/#">Forgot your password?</a>

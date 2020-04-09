@@ -10,6 +10,7 @@ from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email, EmailValidator, FileExtensionValidator, MaxValueValidator, MinValueValidator, RegexValidator
 from django.contrib.auth.validators import ASCIIUsernameValidator
+from django.core.mail import send_mail
 
 import os
 import re

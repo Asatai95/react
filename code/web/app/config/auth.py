@@ -54,7 +54,5 @@ class BasePermission(metaclass=BasePermissionMetaclass):
 class IsAuthenticated(BasePermission):
 
     def has_permission(self, request, view):
-        print("self.request")
-        print(view)
-        print(request.user.id)
+
         return bool(request.user and request.user.is_authenticated)

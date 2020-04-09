@@ -33,6 +33,7 @@ urlpatterns = [
     path("login/api/", views.Login.as_view()),
     path("logout/", views.Logout.as_view(), name='logout'),
     path("user/create/", views.UserRegister.as_view(), name='create'),
+    path("user/create/auth/<token>/", views.UserRegisterChecker.as_view(), name='checker'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

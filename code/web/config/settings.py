@@ -83,6 +83,14 @@ DATABASES = {
     }
 }
 
+EMAIL_HOST = 'smtp.muumuu-mail.com'
+DEFAULT_FROM_EMAIL = 'myapp@awapoke.okinawa'
+EMAIL_HOST_USER = 'myapp@awapoke.okinawa'
+EMAIL_HOST_PASSWORD = '4WkOD4Vhqnwfdk3Mwz'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = False
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',

@@ -26,19 +26,21 @@ class UserFilter(serializers.ModelSerializer):
         }
 
 class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = User
         fields = ('id', 'username', 'password', 'email', "message", 'date_joined')
 
-    def create(self, validated_data):
-        return User.objects.create_user(request_data=validated_data)
-
 class CreateUserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=False)
+
     class Meta:
         model = User
-        fields = ("id", "username", "email", "message", "password")
+        fields = ("username", "email", "password")
+
+    def create(self, validated_data):
+        print(validated_data)
+        return User.objects.create_user(request_data=validated_data)
 
 class TodoSerializer(serializers.ModelSerializer):
     class Meta:

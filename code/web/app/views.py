@@ -201,25 +201,15 @@ def UserCreatAuth(request):
             }
             return JsonResponse(data = d, status=201)
     elif request.method == "GET":
-        username = request.GET.get("username")
-        print("usndl")
-        print(username)
-        data = JSONParser().parse(request)
-        print("data")
-        print(data)
-        casc
-        username = SessionStore(session_key=data["username"])["username"]
-        print("username")
-        print(username)
-        password = SessionStore(session_key=data["password"])["password"]
-        email = SessionStore(session_key=data["email"])["email"]
+        username = SessionStore(session_key=request.GET.get("username"))["username"]
+
+        password = SessionStore(session_key=request.GET.get("password"))["password"]
+        email = SessionStore(session_key=request.GET.get("email"))["email"]
         d = {
             "username": username,
             "password": password,
             "email": email
         }
-        print("d")
-        print(d)
         return JsonResponse(data = d, status=201)
 
 class SearchGETAPI(generics.ListAPIView):
@@ -297,13 +287,62 @@ class Logout(APIView):
 class UserRegister(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = CreateUserSerializer
 
     @transaction.atomic
     def post(self, request, format=None):
-        print(request.data)
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            table = User.objects.filter(id=int(serializer.data["id"])).first()
+            table.is_active = False
+            table.save()
+
+            user = User.objects.get(id = int(serializer.data["id"]))
+            current_site = get_current_site(self.request)
+            domain = current_site.domain
+            context = {
+                'protocol': self.request.scheme,
+                'domain': domain,
+                'token': dumps(user.id),
+                'user': user,
+            }
+
+            subject = 'MYAPPアカウントの確認'
+            template = get_template('mail/register/message.txt')
+            message = template.render(context)
+
+            user.email_user(subject, message)
+            return Response(serializer.data, status=201)
+
+        return Response(serializer.errors, status=500)
+
+class UserRegisterChecker(generic.ListView):
+    timeout_seconds = getattr(settings, 'ACTIVATION_TIMEOUT_SECONDS', 60*60*24)
+
+    def get(self, request, **kwargs):
+
+        token = kwargs.get('token')
+
+        try:
+            user_pk = loads(token, max_age=self.timeout_seconds)
+
+        except SignatureExpired:
+            return HttpResponseBadRequest()
+
+        except BadSignature:
+            return HttpResponseBadRequest()
+
+        try:
+            user = Get_user.objects.get(pk=user_pk)
+        except Get_user.DoesNotExist:
+            return HttpResponseBadRequest()
+
+        if not user.is_active:
+            user.is_active = True
+            user.save()
+            messages.success(self.request, user.username + " さん本登録が完了いたしました")
+            return redirect("apps:login")
+        else:
+            return HttpResponseBadRequest()

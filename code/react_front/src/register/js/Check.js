@@ -2,7 +2,9 @@ import React from 'react';
 import CSRFToken from '../../csrftoken';
 
 export default class Check extends React.Component {
+
   render() {
+
     return (
       <form id="post-data" className="register_form" onSubmit={this.props.handleSubmit}>
         <CSRFToken />
