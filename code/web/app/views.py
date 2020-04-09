@@ -117,8 +117,8 @@ def error_404(request):
 #         },
 #         status=201)
 
-class UserInfo(generics.RetrieveAPIView):
-    permission_classes = (IsAuthenticated,)
+class UserInfo(generics.ListAPIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     authentication_classes = (JSONWebTokenAuthentication,)
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -263,6 +263,8 @@ class Login(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
+        print(serializer)
+        print(serializer.is_valid())
         if serializer.is_valid():
             user = serializer.validated_data['user']
             token, created = Token.objects.get_or_create(user=user)
@@ -275,7 +277,7 @@ class Login(ObtainAuthToken):
                 'email': user.email,
                 "password": request.data["password"]
             }, status=201)
-
+        print(serializer.errors)
         return Response(data = {"status": False, "message": serializer.errors}, status=500 )
 
 class Logout(APIView):
@@ -295,6 +297,7 @@ class UserRegister(generics.CreateAPIView):
             serializer.save()
 
             table = User.objects.filter(id=int(serializer.data["id"])).first()
+            table.password = make_password(table.password)
             table.is_active = False
             table.save()
 
