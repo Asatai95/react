@@ -263,7 +263,6 @@ class Login(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
-        print(serializer.is_valid())
         if serializer.is_valid():
             user = serializer.validated_data['user']
             token, created = Token.objects.get_or_create(user=user)
@@ -335,14 +334,14 @@ class UserRegisterChecker(generic.ListView):
             return HttpResponseBadRequest()
 
         try:
-            user = Get_user.objects.get(pk=user_pk)
-        except Get_user.DoesNotExist:
+            user = User.objects.get(pk=user_pk)
+        except User.DoesNotExist:
             return HttpResponseBadRequest()
 
         if not user.is_active:
             user.is_active = True
             user.save()
-            messages.success(self.request, user.username + " さん本登録が完了いたしました")
-            return redirect("apps:login")
+            value = hashlib.sha256(str(user.pk).encode('utf-8')).hexdigest()
+            return HttpResponseRedirect(redirect_to='http://localhost:3000/login?auth='+value+'')
         else:
             return HttpResponseBadRequest()

@@ -19,6 +19,7 @@ const route = (
     <Route exact path="/" component={App}></Route>
     <Route path="/login" component={Login}></Route>
     <Route path="/user/create" component={Register}></Route>
+    <Route path="/login/user/:auth" component={Login}></Route>
   </Router>
 );
 

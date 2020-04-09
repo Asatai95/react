@@ -57,10 +57,39 @@ class Login extends Component {
     }
 
     componentDidMount(){
+        var urlParamStr = window.location.search;
+        if (urlParamStr !== "") {
+            if (urlParamStr) {
+                urlParamStr = urlParamStr.substring(1)
+
+                var params = {}
+
+                urlParamStr.split('&').forEach( param => {
+                  const temp = param.split('=')
+                  params = {
+                    ...params,
+                    [temp[0]]: temp[1]
+                  }
+                })
+            }
+            if (Cookies.get("auth") !== undefined){
+                window.location.href = "/login";
+            } else {
+                try{
+                    Cookies.set("auth", params.auth)
+                } catch {
+                    window.location.href = "/login";
+                }
+            }
+            ReactDOM.render(<POPUPbutton />, document.getElementById('popupwin'));
+        }
         if (Cookies.get("username") !== undefined){
             Cookies.remove("username")
             Cookies.remove("password")
             Cookies.remove("email")
+            if (Cookies.get("auth")){
+                Cookies.remove("auth")
+            }
             ReactDOM.render(<POPUPbutton />, document.getElementById('popupwin'));
         }
     }
