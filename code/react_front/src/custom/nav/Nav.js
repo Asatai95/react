@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import {RouteURL, header} from "../../assets/Config";
-import { darkblue } from 'color-name';
-// import Cookies from 'js-cookie';
+import {RouteURL, header, UserAuth} from "../../assets/Config";
+import Cookies from 'js-cookie';
 
 class Header extends Component {
     constructor(props) {
@@ -16,20 +15,23 @@ class Header extends Component {
     }
 
     componentDidMount() {
-        // header["Authorization"] = "JWT [eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyNCwidXNlcm5hbWUiOiJ0ZXN0LnN1Yi5ha2F1bnRvQGdtYWlsLmNvbSIsImV4cCI6MTU4NjQzOTc0MiwiZW1haWwiOiJ0ZXN0LnN1Yi5ha2F1bnRvQGdtYWlsLmNvbSJ9.eWq11vRIuM3sQRRe51JnebD4MaivYR-7l42f0A43n8w]"
-        console.log(header)
-        axios.get(RouteURL() + "/userinfo/", header)
-        .then(response => {
+        axios.get(RouteURL() + "/userinfo/", {
+            headers: {
+              Authorization: `JWT `+Cookies.get("myapp")+``
+            }
+        })
+        .then((response) => {
+            console.log("response")
+            console.log(response)
             this.setState({
                 label: "logout",
                 url: "/logout",
                 class: "link_logout",
-                user: response.username,
+                user: response.data.username,
                 isToggleOn: true
             });
         })
         .catch((error) => {
-            console.log(error.response)
             this.setState({
                 label: "login",
                 url: "/login",

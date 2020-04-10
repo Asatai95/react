@@ -52,11 +52,14 @@ export const UserAuth = (email, password) => {
         "email": email,
         "password": password
     }
+    Cookies.set("email", email)
+    Cookies.set("password", password)
     var token = Cookies.get('myapptodo');
     header["Content-Type"] = "application/json"
     header["Authorization"] = "JWT["+token+"]"
     axios.post(RouteURL() + '/userauth/', d, header)
     .then((response) => {
+        console.log("response")
         console.log(response)
         Cookies.set("myapp", response.data.token);
     })

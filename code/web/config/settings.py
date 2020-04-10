@@ -150,6 +150,12 @@ CORS_ALLOW_CREDENTIALS = True
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': "JWT",
     'JWT_VERIFY_EXPIRATION': False,
+    'JWT_ALLOW_REFRESH': True,
+    'ROTATE_REFRESH_TOKENS': True,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=28),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
 }
 
 REST_FRAMEWORK = {

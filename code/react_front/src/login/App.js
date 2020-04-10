@@ -58,6 +58,7 @@ class Login extends Component {
 
     componentDidMount(){
         var urlParamStr = window.location.search;
+        var obj = document.getElementById("popupwin");
         if (urlParamStr !== "") {
             if (urlParamStr) {
                 urlParamStr = urlParamStr.substring(1)
@@ -81,6 +82,7 @@ class Login extends Component {
                     window.location.href = "/login";
                 }
             }
+            obj.classList.add("popupwin_active");
             ReactDOM.render(<POPUPbutton />, document.getElementById('popupwin'));
         }
         if (Cookies.get("username") !== undefined){
@@ -90,6 +92,7 @@ class Login extends Component {
             if (Cookies.get("auth")){
                 Cookies.remove("auth")
             }
+            obj.classList.add("popupwin_active");
             ReactDOM.render(<POPUPbutton />, document.getElementById('popupwin'));
         }
     }
@@ -101,8 +104,10 @@ class Login extends Component {
           'email': email,
           "password": password,
         };
+
         axios.post(RouteURL() + "/login/api/", conf, header)
         .then(response => {
+            console.log("response")
             console.log(response)
             Cookies.set("myapptodo", response.data.token);
             // Cookies.remove('myapptodo');

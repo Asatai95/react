@@ -97,6 +97,8 @@ export default class PopAPP extends React.Component {
       isPoseCompleted: false,
       dismissesByDrag: false,
     })
+    const obj= document.getElementById('popupwin');
+    obj.classList.remove("popupwin_active")
     this.props.onClose()
   }
 

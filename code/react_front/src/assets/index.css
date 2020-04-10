@@ -183,6 +183,11 @@ code {
   height: 72px;
   top: 0;
   margin: auto;
+  z-index: -1;
+}
+
+.popupwin_active {
+  z-index: 10!important;
 }
 
 #popupwin .popup {

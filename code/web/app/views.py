@@ -117,19 +117,20 @@ def error_404(request):
 #         },
 #         status=201)
 
-class UserInfo(generics.ListAPIView):
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    authentication_classes = (JSONWebTokenAuthentication,)
+class UserInfo(generics.RetrieveAPIView):
+    permission_classes = (IsAuthenticated,)
+    authtication_classes = (JSONWebTokenAuthentication, )
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = CreateUserSerializer
 
     def get(self, request, format=None):
-        print("self.request")
-        print(self.request.user.id)
+        print("self.user.username")
+        print(request.user.username)
+        print(self.request.session.get("password"))
         return Response(data={
-            "status": True,
             'username': request.user.username,
-            "item": "logout"
+            'email': request.user.email,
+            'id': request.user.id,
         },
         status=201)
 
@@ -263,13 +264,11 @@ class Login(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
-        print(serializer)
-        print(serializer.is_valid())
         if serializer.is_valid():
             user = serializer.validated_data['user']
             token, created = Token.objects.get_or_create(user=user)
             # login(self.request, user)
-
+            self.request.session["password"] = request.data["password"]
             return Response({
                 "status": True,
                 'token': token.key,
