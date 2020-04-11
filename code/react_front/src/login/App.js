@@ -107,8 +107,6 @@ class Login extends Component {
 
         axios.post(RouteURL() + "/login/api/", conf, header)
         .then(response => {
-            console.log("response")
-            console.log(response)
             Cookies.set("myapptodo", response.data.token);
             // Cookies.remove('myapptodo');
             UserAuth(response.data.email, response.data.password)

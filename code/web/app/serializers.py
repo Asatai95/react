@@ -39,7 +39,6 @@ class CreateUserSerializer(serializers.ModelSerializer):
         fields = ("id","username", "email", "password")
 
     def create(self, validated_data):
-        print(validated_data)
         return User.objects.create_user(request_data=validated_data)
 
 class TodoSerializer(serializers.ModelSerializer):
@@ -66,8 +65,6 @@ class AccountSerializer(serializers.ModelSerializer):
     def validate(self, data):
         user = User(**data)
         password = data.get('password')
-        print("password")
-        print(password)
         errors = dict()
         try:
             validators.validate_password(password=password, user=User)

@@ -124,9 +124,6 @@ class UserInfo(generics.RetrieveAPIView):
     serializer_class = CreateUserSerializer
 
     def get(self, request, format=None):
-        print("self.user.username")
-        print(request.user.username)
-        print(self.request.session.get("password"))
         return Response(data={
             'username': request.user.username,
             'email': request.user.email,
@@ -177,12 +174,10 @@ def testAPI(request):
 
 @csrf_exempt
 def UserCreatAuth(request):
-    print(request.method)
     tmp_list = []
     if request.method == "POST":
         data = JSONParser().parse(request)
         if ErrorFlag(data) is True:
-            print(data)
             tmp_list = []
             s = SessionStore()
             s["username"] = data["username"]
@@ -276,7 +271,6 @@ class Login(ObtainAuthToken):
                 'email': user.email,
                 "password": request.data["password"]
             }, status=201)
-        print(serializer.errors)
         return Response(data = {"status": False, "message": serializer.errors}, status=500 )
 
 class Logout(APIView):

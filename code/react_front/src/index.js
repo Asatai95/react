@@ -10,9 +10,6 @@ import Header from "./custom/nav/Nav";
 import * as serviceWorker from './serviceWorker';
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
-// import { createStore } from 'redux';
-// import { Provider } from 'react-redux';
-// import reducer from './reducers/reducer';
 
 const route = (
   <Router>

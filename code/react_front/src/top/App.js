@@ -209,8 +209,6 @@ class App extends Component {
     header["Authorization"] = "JWT["+token+"]"
     axios.get(RouteURL() + '/test_api/profile/list/', header)
     .then(response => {
-      console.log("response")
-      console.log(response)
       this.setState({
         users: response.data.reverse(),
         usersLength: response.data.length,
@@ -218,7 +216,6 @@ class App extends Component {
       });
     })
     .catch((error) => {
-      console.log(error.response)
       console.error(error)
     });
   }

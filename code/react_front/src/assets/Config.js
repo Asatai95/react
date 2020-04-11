@@ -59,8 +59,6 @@ export const UserAuth = (email, password) => {
     header["Authorization"] = "JWT["+token+"]"
     axios.post(RouteURL() + '/userauth/', d, header)
     .then((response) => {
-        console.log("response")
-        console.log(response)
         Cookies.set("myapp", response.data.token);
     })
     .catch((error) => {

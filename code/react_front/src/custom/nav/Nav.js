@@ -21,8 +21,6 @@ class Header extends Component {
             }
         })
         .then((response) => {
-            console.log("response")
-            console.log(response)
             this.setState({
                 label: "logout",
                 url: "/logout",

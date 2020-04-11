@@ -98,7 +98,6 @@ class Register extends Component {
       }
       axios.post(RouteURL() + "/test_api/profile/", conf, header)
       .catch((error) => {
-          console.log(error.response.data)
           var value = error.response.data.message
           var label = error.response.data.label
           this.setState({
@@ -194,7 +193,6 @@ class Register extends Component {
         window.location.href = "/login";
       })
       .catch((error) => {
-        console.log(error.response)
         if (error.response !== undefined){
           if (error.response.data.detail !== undefined){
             this.setState({
