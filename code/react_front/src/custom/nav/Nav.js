@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import {RouteURL, header, UserAuth} from "../../assets/Config";
+import {RouteURL, Loading} from "../../assets/Config";
 import Cookies from 'js-cookie';
+import POPUPbutton from "../../login/js/modal";
+import ReactDOM from 'react-dom';
 
 class Header extends Component {
     constructor(props) {
@@ -30,6 +32,21 @@ class Header extends Component {
             });
         })
         .catch((error) => {
+            var path = window.location.pathname ;
+            console.log(path)
+            if (path.indexOf("user") < 0 && path !== "/login" && path !== "/logout"){
+                Loading("login");
+            }
+            const label = Cookies.get("login");
+            if (label === "login"){
+                Cookies.remove("login")
+                ReactDOM.render(
+                    <POPUPbutton
+                        item="login"
+                    />,
+                    document.getElementById('popupwin')
+                );
+            }
             this.setState({
                 label: "login",
                 url: "/login",

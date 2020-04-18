@@ -44,8 +44,8 @@ RUN mkdir -p ${WORKSPACE_DIR}
 ARG project_dir=/var/www/react/
 WORKDIR ${WORKSPACE_DIR}
 
-ADD requirements.txt $project_dir
-WORKDIR $project_dir
+ADD requirements.txt ${WORKSPACE_DIR}
+WORKDIR ${WORKSPACE_DIR}
 RUN wget https://twistedmatrix.com/Releases/Twisted/18.9/Twisted-18.9.0.tar.bz2 \
     && tar -jxvf Twisted-18.9.0.tar.bz2 \
     && cd Twisted-18.9.0 \

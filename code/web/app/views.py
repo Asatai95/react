@@ -162,6 +162,7 @@ def testAPI(request):
             return JsonResponse(data = {"status": False, "message": serializer.errors}, status=500)
         else:
             user = User.objects.filter(is_active = True)
+            print(data)
             for key, value in data.items():
                 if key == "name":
                     if user.filter(username = data["name"]).first():
@@ -169,6 +170,11 @@ def testAPI(request):
                 elif key == "email":
                     if user.filter(email = data["email"]).first():
                         return JsonResponse(data = {"status": False, "label" : "email_error", "message": "このメールアドレスはすでに使用されています"}, status=500)
+                    pattern = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+                    print(data["email"])
+                    if not re.match(pattern, data["email"]):
+                        print("error")
+                        return JsonResponse(data = {"status": False, "label" : "email_error", "message": "正しいメールアドレスを入力してください"}, status=500)
 
             return JsonResponse(data = {"status": True}, status=201)
 
@@ -178,6 +184,11 @@ def UserCreatAuth(request):
     if request.method == "POST":
         data = JSONParser().parse(request)
         if ErrorFlag(data) is True:
+            print("userinfo")
+            print(data)
+            pattern = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+            if not re.match(pattern, data["email"]):
+                return JsonResponse(data = {"status": False, "label" : "email_error", "message": "正しいメールアドレスを入力してください"}, status=500)
             tmp_list = []
             s = SessionStore()
             s["username"] = data["username"]
@@ -198,7 +209,6 @@ def UserCreatAuth(request):
             return JsonResponse(data = d, status=201)
     elif request.method == "GET":
         username = SessionStore(session_key=request.GET.get("username"))["username"]
-
         password = SessionStore(session_key=request.GET.get("password"))["password"]
         email = SessionStore(session_key=request.GET.get("email"))["email"]
         d = {
@@ -259,6 +269,7 @@ class Login(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
+
         if serializer.is_valid():
             user = serializer.validated_data['user']
             token, created = Token.objects.get_or_create(user=user)

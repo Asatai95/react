@@ -83,7 +83,9 @@ class Login extends Component {
                 }
             }
             obj.classList.add("popupwin_active");
-            ReactDOM.render(<POPUPbutton />, document.getElementById('popupwin'));
+            ReactDOM.render(<POPUPbutton
+                info="preuser"
+                />, document.getElementById('popupwin'));
         }
         if (Cookies.get("username") !== undefined){
             Cookies.remove("username")
@@ -93,7 +95,9 @@ class Login extends Component {
                 Cookies.remove("auth")
             }
             obj.classList.add("popupwin_active");
-            ReactDOM.render(<POPUPbutton />, document.getElementById('popupwin'));
+            ReactDOM.render(<POPUPbutton
+                info="authuser"
+                />, document.getElementById('popupwin'));
         }
     }
 

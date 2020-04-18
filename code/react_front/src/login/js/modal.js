@@ -15,11 +15,19 @@ class POPUPbutton extends Component {
     }
 
     render() {
+        var info ;
+        if (this.props.info === "preuser"){
+            info = "ユーザーを仮登録しました"
+        } else if (this.props.info === "authuser"){
+            info = "ユーザーを本登録しました"
+        } else {
+            info = "ログインしてください"
+        }
         return(
             <div>
                 <PopAPP
                     ref={this.model}
-                    item="ユーザーを仮登録しました"
+                    item={info}
                     height="-72px"
                     onOpen={() => {}}
                     onClose={() => {}}

@@ -96,13 +96,23 @@ class Register extends Component {
         "label": "check",
         [event.target.name]: value
       }
+      console.log(event.target.name)
+      var label_name = event.target.name
       axios.post(RouteURL() + "/test_api/profile/", conf, header)
+      .then((response) => {
+        console.log(this.state)
+        const label_item = label_name + "_error"
+        this.setState({
+          [label_item] : ""
+        })
+      })
       .catch((error) => {
-          var value = error.response.data.message
-          var label = error.response.data.label
-          this.setState({
-            [label]: value,
-          });
+        console.log(error)
+        var value = error.response.data.message
+        var label = error.response.data.label
+        this.setState({
+          [label]: value,
+        });
       });
     }
 
@@ -147,11 +157,25 @@ class Register extends Component {
         };
         axios.post(RouteURL() + "/user/info/session/", conf, header)
         .then((response) => {
+          console.log(this.state)
           Cookies.set("username", response.data.username);
           Cookies.set("password", response.data.password);
           Cookies.set("email", response.data.email);
+          this.Loading();
+        })
+        .catch((error) => {
+          console.log("eorror")
+          console.log(error)
+          var label = Object.keys(error.response.data.message)
+          console.log(error)
+          for (var i = 0 ; i < label.length; i++){
+            var value = error.response.data.message[label[i]]
+            var error_label = label[i] + "_error"
+            this.setState({
+              [error_label]: value,
+            });
+          }
         });
-        this.Loading()
     }
     componentDidMount(){
       const d = {
@@ -193,6 +217,7 @@ class Register extends Component {
         window.location.href = "/login";
       })
       .catch((error) => {
+        console.log(error.response)
         if (error.response !== undefined){
           if (error.response.data.detail !== undefined){
             this.setState({

@@ -27,6 +27,7 @@ urlpatterns = [
     path('test_api/profile/list/search/<str:params>', views.SearchGETAPI.as_view()),
     path("error/", views.error_404, name="error404"),
     path("userauth/", obtain_jwt_token),
+    path('userauth/refresh/', refresh_jwt_token),
     path('api/token/refresh/', refresh_jwt_token),
     path("user/info/session/", views.UserCreatAuth),
     path("userinfo/", views.UserInfo.as_view()),

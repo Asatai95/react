@@ -59,9 +59,32 @@ export const UserAuth = (email, password) => {
     header["Authorization"] = "JWT["+token+"]"
     axios.post(RouteURL() + '/userauth/', d, header)
     .then((response) => {
-        Cookies.set("myapp", response.data.token);
+        axios.post(RouteURL() + '/userauth/refresh/', {
+            "token": response.data.token,
+        }, header)
+        .then((response) => {
+            Cookies.set("myapp", response.data.token);
+        });
     })
     .catch((error) => {
         console.log(error.response)
     });
+}
+
+export const Loading = (info) => {
+  var obj = document.getElementById("loading");
+  obj.classList.add("active");
+  var element = document.getElementById('loading');
+  element.innerHTML = '<div id="loadicon" class="loader"></div>'
+  const item =  () => {
+    obj.classList.remove("active");
+    const block = document.getElementById("loading");
+    const broccoli = block.lastElementChild;
+    block.removeChild(broccoli);
+    if (info === "login"){
+        Cookies.set("login", "login");
+        window.location.href = "/login";
+    }
+  }
+  setTimeout(item, 1000);
 }
