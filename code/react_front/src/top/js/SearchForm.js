@@ -11,13 +11,13 @@ export default class Search extends React.Component {
             />
           )}
           <span>/</span>
-          <div className="username">
-            <span>ユーザー名</span>
+          <div className="searchwordBox">
+            <span>検索ワード</span>
             <input
-              type="text" name="username"
+              type="text" name="search"
               id="search"
-              className="searchusername"
-              placeholder="username"
+              className="searchword"
+              placeholder="検索ワード"
               onChange={this.props.searchItem}
             />
           </div>

@@ -44,7 +44,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
 class TodoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Todo
-        fields = ('id', 'title', 'body',)
+        fields = ('id', 'user_id', 'title', 'message', )
 
 class UserAuthentication(serializers.ModelSerializer):
     email = filters.CharFilter(name="email", lookup_expr='contains')

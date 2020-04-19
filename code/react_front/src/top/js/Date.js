@@ -21,9 +21,12 @@ export const LocalDatePicker = (response) => {
 
     date_db = userList(response["respose_item_date"])
     list_count = date_db.date.length;
-
-    const [startDate, setStartDate] = useState(Date.parse(date_db.date[list_count - 1]))
-    const [endDate, setEndDate] = useState( Date.parse(date_db.date[0]))
+    var end_date_item = new Date(Date.parse(date_db.date[list_count - 1]));
+    var end_date = end_date_item.getDate() + 1;
+    var end_month = end_date_item.getMonth() + 1
+    end_date_item = new Date(''+end_date_item.getFullYear()+'/'+end_month+'/'+end_date+'');
+    const [startDate, setStartDate] = useState(Date.parse(date_db.date[0]))
+    const [endDate, setEndDate] = useState( end_date_item )
 
     const handleChange = (info, date) => {
         response["handleDateChange"](info, date)

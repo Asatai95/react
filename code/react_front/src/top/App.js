@@ -16,18 +16,13 @@ class App extends Component {
     this.state = {
       users: [],
       usersLength: 0,
-      name: "",
-      email: "",
+      title: "",
       message: "",
-      password: "",
-      password_check: "",
-      name_error: "",
-      email_error: "",
+      title_error:"",
       message_error: "",
-      password_error: "",
-      password_check_error: "",
       respose_item_date : "",
       flag: false,
+      search_flag: true,
       // loading: false
     };
 
@@ -40,59 +35,16 @@ class App extends Component {
 
   handleChange(event) {
     var value = event.target.value.trim();
-    if (event.target.name === 'name') {
-      this.setState({
-        name: value,
-        name_error: Validation.formValidate(event.target.name, value)
-      });
-    }
-    else if (event.target.name === 'email') {
-      this.setState({
-        email: value,
-        email_error: Validation.formValidate(event.target.name, value)
-      });
-    }
-    else if (event.target.name === 'message') {
+    if (event.target.name === 'message') {
       this.setState({
         message: value,
         message_error: Validation.formValidate(event.target.name, value)
       });
-    }
-    else if (event.target.name === 'password') {
+    } else if (event.target.name === 'title') {
       this.setState({
-        password: value,
-        password_error: Validation.formValidate(event.target.name, value)
+        title: value,
+        title_error: Validation.formValidate(event.target.name, value)
       });
-      if (this.state.password_check){
-        if (this.state.password_check !== event.target.value) {
-          if (Validation.formValidate(event.target.name, value) === "") {
-            this.setState({
-              password: value,
-              password_error: "パスワードは確認用と同じ値を入力してください"
-            });
-          } else {
-            this.setState({
-              password_error: ""
-            });
-          }
-        }
-      }
-    }
-    else if (event.target.name === 'password_check') {
-      this.setState({
-        password_check: value,
-        password_check_error: Validation.formValidate(event.target.name, event.target.value)
-      });
-      if (this.state.password){
-        if (event.target.value !== this.state.password) {
-          if (Validation.formValidate(event.target.name, value) === "") {
-            this.setState({
-              password_check: value,
-              password_check_error: "パスワードは確認用と同じ値を入力してください"
-            });
-          }
-        }
-      }
     }
   }
 
@@ -113,7 +65,7 @@ class App extends Component {
     } else {
       item = getStringFromDate(new Date())
     }
-    var search_username = document.getElementsByClassName("searchusername")[0].value
+    var search_username = document.getElementsByClassName("searchword")[0].value
 
     var search_value;
     if (label === "end") {
@@ -128,13 +80,21 @@ class App extends Component {
         "search": item,
         "search_other": search_value,
         "search_other_value": search_username
+      },
+      headers: {
+        Authorization: `JWT `+Cookies.get("myapp")+``
       }
     }
     axios.get(RouteURL() + '/test_api/profile/list/search/', conf)
     .then(response => {
+      var item__flag = true;
+      if (response.data.length === 0){
+        item__flag = false
+      }
       this.setState({
         users: response.data.reverse(),
         usersLength: response.data.length,
+        search_flag: item__flag,
       });
     })
     .catch((error) => {
@@ -162,66 +122,68 @@ class App extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-
-    const { name, email, message, password, password_check } = this.state;
-    const conf = {
-      'username': name,
-      'email': email,
-      'message': message,
-      "password": password,
-      "password_check": password_check
-    };
-
-    axios.post(RouteURL() + "/test_api/profile/", conf, header)
-    .then(response => {
-      this.state.users.unshift(response.data);
-      this.setState({
-        users: this.state.users,
-        usersLength: this.state.users.length,
-        name: "",
-        email: "",
-        message: "",
-        password: "",
-        password_check: "",
+    const { title, message } = this.state;
+    var userauth;
+    axios.get(RouteURL() + "/userinfo/", {
+      headers: {
+        Authorization: `JWT `+Cookies.get("myapp")+``
+      }
+    })
+    .then((response) => {
+      userauth = response.data.id;
+      const conf = {
+        'user_id': userauth,
+        'title': title,
+        'message': message,
+      };
+      axios.post(RouteURL() + "/test_api/profile/", conf, header)
+      .then(response => {
+        this.state.users.unshift(response.data);
+        this.setState({
+          users: this.state.users,
+          usersLength: this.state.users.length,
+          title: "",
+          message: "",
+        });
+      })
+      .catch((error) => {
+        if (error.response !== undefined){
+          var label = Object.keys(error.response.data.message)
+          for (var i = 0 ; i < label.length; i++){
+            var value = error.response.data.message[label[i]]
+            var error_label = label[i] + "_error"
+            this.setState({
+              [error_label]: value,
+            });
+          }
+        }
       });
     })
-    .catch((error) => {
-      if (error.response !== undefined){
-        var label = Object.keys(error.response.data.message)
-        for (var i = 0 ; i < label.length; i++){
-          var value = error.response.data.message[label[i]]
-          if (label[i] === "username"){
-            label[i] = "name"
-          }
-          var error_label = label[i] + "_error"
-          this.setState({
-            [error_label]: value,
-          });
-        }
-      }
-    });
   }
 
-
   componentDidMount() {
-    var token = Cookies.get('myapp');
-    // header["Content-Type"] = "application/json"
-    header["Authorization"] = "JWT["+token+"]"
-    axios.get(RouteURL() + '/test_api/profile/list/', header)
-    .then(response => {
+    Cookies.remove("userloginauth");
+    axios.get(RouteURL() + '/test_api/profile/list/', {
+      headers: {
+          Authorization: `JWT `+Cookies.get("myapp")+``
+      }
+    })
+    .then((response) => {
+      const user_list = response.data.users.reverse()
       this.setState({
-        users: response.data.reverse(),
-        usersLength: response.data.length,
-        respose_item_date: response.data.reverse(),
+        users: user_list,
+        usersLength: response.data.users.length,
+        respose_item_date: user_list,
       });
     })
     .catch((error) => {
       console.error(error)
-    });
+    })
   }
 
   searchItem(event){
     var value = event.target.value.trim();
+    event.target.value = value
     var label = event.target.name;
     var search_value_1 = document.getElementsByClassName("example-custom-input")[0].textContent
     var search_value_2 = document.getElementsByClassName("example-custom-input")[1].textContent
@@ -232,18 +194,25 @@ class App extends Component {
         "search": value,
         "search_other": search_value_1,
         "search_other_value": search_value_2
+      },
+      headers: {
+        Authorization: `JWT `+Cookies.get("myapp")+``
       }
     }
     axios.get(RouteURL() + '/test_api/profile/list/search/', conf)
     .then(response => {
+      var item__flag = true;
+      if (response.data.length === 0){
+        item__flag = false
+      }
       this.setState({
         users: response.data.reverse(),
         usersLength: response.data.length,
+        search_flag: item__flag
       });
     })
     .catch((error) => {
       console.error(error)
-      // window.location.href = RouteURL() + "/error/";
     });
 
   }
@@ -275,15 +244,9 @@ class App extends Component {
         </div>
         <div className="column is-6">
           <Form
-            name={this.state.name}
-            email={this.state.email}
-            password={this.state.password}
-            password_check={this.state.password_check}
+            title={this.state.title}
             message={this.state.message}
-            name_error={this.state.name_error}
-            email_error={this.state.email_error}
-            password_error={this.state.password_error}
-            password_check_error={this.state.password_check_error}
+            title_error={this.state.title_error}
             message_error={this.state.message_error}
             handleChange={this.handleChange}
             handleSubmit={this.handleSubmit}
@@ -294,20 +257,18 @@ class App extends Component {
         <div className="column is-12" id="user-table">
           <div className="listNAME">
             <p>There are {this.state.usersLength} users.</p>
-            { this.state.usersLength !== 0 && (
-              <Search
-                searchItem={this.searchItem}
-                respose_item_date={this.state.respose_item_date}
-                handleDateChange={this.handleDateChange}
-              />
-            )}
+            <Search
+              searchItem={this.searchItem}
+              respose_item_date={this.state.respose_item_date}
+              handleDateChange={this.handleDateChange}
+            />
           </div>
           {this.state.usersLength !== 0 && (
             <UserList
               users={this.state.users}
             />
           )}
-          {this.state.usersLength === 0 && (
+          {this.state.search_flag === false && (
             <div className="Notable">
               <p>検索結果なし</p>
             </div>

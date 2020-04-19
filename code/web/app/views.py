@@ -103,19 +103,25 @@ def error_404(request):
 
     return render(request, '404.html', contexts, status=404)
 
-# class UserInfo(APIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-
-#     def get(self, request):
-#         user = self.request.user
-#         print(user.id)
-#         return Response(data={
-#             "status": True,
-#             'username': user.username,
-#             "item": "logout"
-#         },
-#         status=201)
+# usersession
+def UserSessionStore():
+    s = SessionStore()
+    s["username"] = data["username"]
+    s.create()
+    username = s.session_key
+    s["password"] = data["password"]
+    s.create()
+    password = s.session_key
+    s["email"] = data["email"]
+    s.create()
+    email = s.session_key
+    s.save()
+    d = {
+        "username": username,
+        "email": email,
+        "password": password
+    }
+    return d
 
 class UserInfo(generics.RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
@@ -150,12 +156,9 @@ def testAPI(request):
     if request.method == "POST":
         data = JSONParser().parse(request)
         if ErrorFlag(data) is True:
-            checker = passwordChecker(data)
-            if not checker :
-                return JsonResponse(serializer.errors, status=400)
-            data.pop("password")
-            data["password"] = data.pop("password_check")
-            serializer = CreateUserSerializer(data=data)
+            user = request.user
+            print(user.id)
+            serializer = TodoSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
                 return JsonResponse(serializer.data, status=201)
@@ -171,7 +174,6 @@ def testAPI(request):
                     if user.filter(email = data["email"]).first():
                         return JsonResponse(data = {"status": False, "label" : "email_error", "message": "このメールアドレスはすでに使用されています"}, status=500)
                     pattern = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-                    print(data["email"])
                     if not re.match(pattern, data["email"]):
                         print("error")
                         return JsonResponse(data = {"status": False, "label" : "email_error", "message": "正しいメールアドレスを入力してください"}, status=500)
@@ -184,27 +186,15 @@ def UserCreatAuth(request):
     if request.method == "POST":
         data = JSONParser().parse(request)
         if ErrorFlag(data) is True:
-            print("userinfo")
-            print(data)
             pattern = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
             if not re.match(pattern, data["email"]):
                 return JsonResponse(data = {"status": False, "label" : "email_error", "message": "正しいメールアドレスを入力してください"}, status=500)
             tmp_list = []
-            s = SessionStore()
-            s["username"] = data["username"]
-            s.create()
-            username = s.session_key
-            s["password"] = data["password"]
-            s.create()
-            password = s.session_key
-            s["email"] = data["email"]
-            s.create()
-            email = s.session_key
-            s.save()
+            dic = UserSessionStore()
             d = {
-                "username": username,
-                "password": password,
-                "email": email
+                "username": dic["username"],
+                "password": dic["password"],
+                "email": dic["email"]
             }
             return JsonResponse(data = d, status=201)
     elif request.method == "GET":
@@ -219,8 +209,8 @@ def UserCreatAuth(request):
         return JsonResponse(data = d, status=201)
 
 class SearchGETAPI(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    queryset = Todo.objects.all()
+    serializer_class = TodoSerializer
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
 
     def get_queryset(self):
@@ -229,23 +219,27 @@ class SearchGETAPI(generics.ListAPIView):
         other_value = self.request.query_params.get("search_other")
         other_value_1 = self.request.query_params.get("search_other_value")
 
-        table = User.objects.all()
-        if label == "username":
-            table = table.filter(username__contains=value, username__icontains=value, date_joined__gte=other_value, date_joined__lte=other_value_1)
+        table = Todo.objects.all()
+        if label == "search":
+            if value == "":
+                table = table.filter(created_at__gte=other_value, created_at__lte=other_value_1)
+                print(table)
+            else:
+                table = table.filter(title__icontains=value, created_at__gte=other_value, created_at__lte=other_value_1)
         elif label == "start":
-            datetimeitem = datetime.strptime(value, '%Y-%m-%d')
-            datetimeitem_other = datetime.strptime(other_value, '%Y-%m-%d')
+            datetimeitem = datetime.datetime.strptime(value, '%Y-%m-%d')
+            datetimeitem_other = datetime.datetime.strptime(other_value, '%Y-%m-%d')
             if other_value_1 :
-                table = table.filter(date_joined__gte=datetimeitem, date_joined__lte=datetimeitem_other, username__icontains=other_value_1)
+                table = table.filter(created_at__gte=datetimeitem, created_at__lte=datetimeitem_other, title__icontains=other_value_1)
             else:
-                table = table.filter(date_joined__gte=datetimeitem, date_joined__lte=datetimeitem_other)
+                table = table.filter(created_at__gte=datetimeitem, created_at__lte=datetimeitem_other)
         elif label == "end":
-            datetimeitem = datetime.strptime(value, '%Y-%m-%d')
-            datetimeitem_other = datetime.strptime(other_value, '%Y-%m-%d')
+            datetimeitem = datetime.datetime.strptime(value, '%Y-%m-%d')
+            datetimeitem_other = datetime.datetime.strptime(other_value, '%Y-%m-%d')
             if other_value_1 != "":
-                table = table.filter(date_joined__gte=datetimeitem_other, date_joined__lte=datetimeitem, username__icontains=other_value_1)
+                table = table.filter(created_at__gte=datetimeitem_other, created_at__lte=datetimeitem, title__icontains=other_value_1)
             else:
-                table = table.filter(date_joined__gte=datetimeitem_other, date_joined__lte=datetimeitem)
+                table = table.filter(created_at__gte=datetimeitem_other, created_at__lte=datetimeitem)
 
         return table
 
@@ -260,9 +254,26 @@ class TestAPI(generics.ListAPIView):
     serializer_class = TodoSerializer
 
 class TestGETAPI(generics.ListAPIView):
-    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticated,)
+    authtication_classes = (JSONWebTokenAuthentication, )
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    def get(self, request, format=None):
+        user = request.user
+        queryset = Todo.objects.filter(user_id = user.id)
+        tmp_list = []
+        if queryset.first():
+            for x in queryset:
+                d = {
+                    "id": x.id,
+                    "title": x.title,
+                    "username": user.username,
+                    "message": x.message,
+                    "date_joined": x.created_at
+                }
+                tmp_list.append(d)
+        return Response({"status": True, "users": tmp_list}, status=201)
 
 class Login(ObtainAuthToken):
 
@@ -273,7 +284,6 @@ class Login(ObtainAuthToken):
         if serializer.is_valid():
             user = serializer.validated_data['user']
             token, created = Token.objects.get_or_create(user=user)
-            # login(self.request, user)
             self.request.session["password"] = request.data["password"]
             return Response({
                 "status": True,

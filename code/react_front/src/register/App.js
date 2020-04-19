@@ -62,11 +62,11 @@ class Register extends Component {
             if (Validation.formValidate(event.target.name, value) === "") {
               this.setState({
                 password: value,
-                password_error: "パスワードは確認用と同じ値を入力してください"
+                password_check_error: "パスワードは確認用と同じ値を入力してください"
               });
             } else {
               this.setState({
-                password_error: ""
+                password_check_error: ""
               });
             }
           }
@@ -96,18 +96,18 @@ class Register extends Component {
         "label": "check",
         [event.target.name]: value
       }
-      console.log(event.target.name)
       var label_name = event.target.name
       axios.post(RouteURL() + "/test_api/profile/", conf, header)
       .then((response) => {
-        console.log(this.state)
+        if (label_name === "name") {
+          label_name = "username"
+        }
         const label_item = label_name + "_error"
         this.setState({
           [label_item] : ""
         })
       })
       .catch((error) => {
-        console.log(error)
         var value = error.response.data.message
         var label = error.response.data.label
         this.setState({
@@ -149,33 +149,39 @@ class Register extends Component {
     }
 
     checkButton(event) {
-        event.preventDefault();
-        const conf = {
-          'username': this.state.username,
-          'email': this.state.email,
-          "password": this.state.password,
-        };
+      event.preventDefault();
+      const conf = {
+        'username': this.state.username,
+        'email': this.state.email,
+        "password": this.state.password,
+      };
+      var flag_check_error;
+      var label = Object.keys(this.state)
+      for (var i = 0; i < label.length; i++){
+          if (label[i].indexOf("_error") > -1 && this.state[label[i]] !== ""){
+            flag_check_error = "disable";
+          }
+      }
+      if (flag_check_error === "disable"){
+        this.setState({
+          "detail_error": "エラーが発生している項目があります"
+        })
+      } else {
         axios.post(RouteURL() + "/user/info/session/", conf, header)
         .then((response) => {
-          console.log(this.state)
           Cookies.set("username", response.data.username);
           Cookies.set("password", response.data.password);
           Cookies.set("email", response.data.email);
           this.Loading();
         })
         .catch((error) => {
-          console.log("eorror")
-          console.log(error)
           var label = Object.keys(error.response.data.message)
-          console.log(error)
-          for (var i = 0 ; i < label.length; i++){
-            var value = error.response.data.message[label[i]]
-            var error_label = label[i] + "_error"
-            this.setState({
-              [error_label]: value,
-            });
-          }
+          var value = error.response.data.message
+          this.setState({
+            [label]: value,
+          });
         });
+      }
     }
     componentDidMount(){
       const d = {
@@ -217,19 +223,29 @@ class Register extends Component {
         window.location.href = "/login";
       })
       .catch((error) => {
-        console.log(error.response)
+
         if (error.response !== undefined){
           if (error.response.data.detail !== undefined){
             this.setState({
               "detail_error": error.response.data.detail,
             });
           } else {
-            var label = Object.keys(error.response.data.message)
-            for (var i = 0 ; i < label.length; i++){
-              var value = error.response.data.message[label[i]]
-              var error_label = label[i] + "_error"
+            try {
+              var label = Object.keys(error.response.data.message)
+              for (var i = 0 ; i < label.length; i++){
+                var value = error.response.data.message[label[i]]
+                var error_label = label[i] + "_error"
+                this.setState({
+                  [error_label]: value,
+                });
+              }
+            } catch {
+              Cookies.remove("username")
+              Cookies.remove("password")
+              Cookies.remove("email")
               this.setState({
-                [error_label]: value,
+                "detail_error": "予期せぬエラーが発生しました",
+                "flag_ch": false,
               });
             }
           }
@@ -245,7 +261,6 @@ class Register extends Component {
     }
 
     render(){
-
         var flag_label = true
         var label = Object.keys(this.state)
         for (var i = 0; i < label.length; i++){
@@ -253,6 +268,7 @@ class Register extends Component {
                 flag_label = "disable";
             }
         }
+
         if (flag_label === true){
             flag_label = "";
         }

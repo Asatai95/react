@@ -5,7 +5,7 @@ import Form from "./js/Form";
 import POPUPbutton from "./js/modal";
 import axios from 'axios';
 import Validation from '../Validation';
-import {header, RouteURL, ClassContainer, UserAuth} from "../assets/Config";
+import {header, RouteURL, ClassContainer, UserAuth, Loading} from "../assets/Config";
 import Cookies from 'js-cookie';
 
 class Login extends Component {
@@ -82,15 +82,16 @@ class Login extends Component {
                     window.location.href = "/login";
                 }
             }
-            obj.classList.add("popupwin_active");
-            ReactDOM.render(<POPUPbutton
-                info="preuser"
-                />, document.getElementById('popupwin'));
         }
         if (Cookies.get("username") !== undefined){
             Cookies.remove("username")
             Cookies.remove("password")
             Cookies.remove("email")
+            obj.classList.add("popupwin_active");
+            ReactDOM.render(<POPUPbutton
+                info="preuser"
+                />, document.getElementById('popupwin'));
+        } else if (Cookies.get("auth")){
             if (Cookies.get("auth")){
                 Cookies.remove("auth")
             }
@@ -112,9 +113,9 @@ class Login extends Component {
         axios.post(RouteURL() + "/login/api/", conf, header)
         .then(response => {
             Cookies.set("myapptodo", response.data.token);
-            // Cookies.remove('myapptodo');
-            UserAuth(response.data.email, response.data.password)
-            // window.location.href = "/"
+            UserAuth(response.data.email, response.data.password);
+            Loading("userauth");
+            Cookies.set("userloginauth", "auth");
         })
         .catch((error) => {
             if (error.response !== undefined){
@@ -148,7 +149,7 @@ class Login extends Component {
         return(
             <div className="main-content-type">
                 <div className="d-flex justify-content-center h-100">
-                    <div className="card">
+                    <div className="card login_content">
                         <div className="card-header">
                             <h3>Sign In</h3>
                             <div className="d-flex justify-content-end social_icon">

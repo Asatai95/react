@@ -10,63 +10,15 @@ export default class Form extends React.Component {
           <div className="control">
             <input
               className="input"
-              type="text" name="name"
-              id="name"
-              placeholder="Name"
-              value={this.props.name}
+              type="text" name="title"
+              id="title"
+              placeholder="Title"
+              value={this.props.title}
               onChange={this.props.handleChange}
               onBlur={this.props.onBlurFunc}
             />
-            {this.props.name_error && (
-              <p className="error" style={{ color: 'red', fontSize: 15 }}>{this.props.name_error}</p>
-            )}
-          </div>
-        </div>
-        <div className="field">
-          <div className="control">
-            <input
-              className="input"
-              type="text"
-              name="email"
-              id="email"
-              placeholder="Email"
-              value={this.props.email}
-              onChange={this.props.handleChange}
-            />
-            {this.props.email_error && (
-              <p className="error" style={{ color: 'red', fontSize: 15 }}>{this.props.email_error}</p>
-            )}
-          </div>
-        </div>
-        <div className="field">
-          <div className="control">
-            <input
-              className="input"
-              type="password"
-              name="password"
-              id="password"
-              placeholder="Password"
-              value={this.props.password}
-              onChange={this.props.handleChange}
-            />
-            {this.props.password_error && (
-              <p className="error" style={{ color: 'red', fontSize: 15 }}>{this.props.password_error}</p>
-            )}
-          </div>
-        </div>
-        <div className="field">
-          <div className="control">
-            <input
-              className="input"
-              type="password"
-              name="password_check"
-              id="password_check"
-              placeholder="Password Check"
-              value={this.props.password_check}
-              onChange={this.props.handleChange}
-            />
-            {this.props.password_check_error && (
-              <p className="error" style={{ color: 'red', fontSize: 15 }}>{this.props.password_check_error}</p>
+            {this.props.title_error && (
+              <p className="error" style={{ color: 'red', fontSize: 15 }}>{this.props.title_error}</p>
             )}
           </div>
         </div>

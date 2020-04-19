@@ -178,6 +178,7 @@ def user_logged_out_callback(sender, request, user, **kwargs):
 class Todo(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.IntegerField(_('user id'), blank=True , null=True)
+    title = models.CharField(_('title'), max_length=45)
     message = models.TextField()
     created_at = models.DateTimeField(_('created at'), default=timezone.now)
 

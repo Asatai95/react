@@ -1,5 +1,12 @@
 const emailValidation = (email: string): string => {
   if (!email) return 'メールアドレスを入力してください';
+  var wPat  = "[\u3041-\u3093]";
+  wPat += "|[\u30A1-\u30F6]";
+  wPat += "|[\u4E00-\u9FFF]";
+  wPat = "^(" + wPat +")+$";
+  if (email.match(wPat)) {
+    return '正しい形式でメールアドレスを入力してください';
+  }
   const regex = /^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
   if (!regex.test(email)) return '正しい形式でメールアドレスを入力してください';
 
@@ -17,6 +24,13 @@ const passwordValidation = (password: string): string => {
   if (password.length <= 8 && password.length >= 16 ) return 'パスワードは8文字以上16文字以下で入力してください';
   var reg = new RegExp(/[!"#$%&'()*+\-.,:;<=>?@[\\\]^_`{|}~]/g);
   if (!/[A-Z]/.test(password) || !reg.test(password)) return "最低でも大文字と記号を一文字以上を使用してください"
+  var wPat  = "[\u3041-\u3093]";
+  wPat += "|[\u30A1-\u30F6]";
+  wPat += "|[\u4E00-\u9FFF]";
+  wPat = "^(" + wPat +")+$";
+  if (password.match(wPat)) {
+    return "パスワードに日本語は使用できません";
+  }
   return '';
 };
 
@@ -30,6 +44,13 @@ const passwordcheckValidation = (password_check: string): string => {
   if (password_check.length <= 8 && password_check.length >= 16 ) return 'パスワードは8文字以上16文字以下で入力してください';
   var reg = new RegExp(/[!"#$%&'()*+\-.,:;<=>?@[\\\]^_`{|}~]/g);
   if (!/[A-Z]/.test(password_check) || !reg.test(password_check)) return "最低でも大文字と記号を一文字以上を使用してください";
+  var wPat  = "[\u3041-\u3093]";
+  wPat += "|[\u30A1-\u30F6]";
+  wPat += "|[\u4E00-\u9FFF]";
+  wPat = "^(" + wPat +")+$";
+  if (password_check.match(wPat)) {
+    return "パスワードに日本語は使用できません";
+  }
   return '';
 };
 
@@ -57,6 +78,17 @@ const messageValidation = (message: string): string => {
   return ""
 }
 
+const titleValidation = (title: string): string => {
+  var flag;
+  var reg = new RegExp(/^[ｦ-ﾟ]*$/);
+  for (var i = 0; i < title.length; i++){
+    if (reg.test(title[i])) flag = false;
+  }
+  if (flag === false) return "半角カタカナを使用できません";
+  if (title.length > 40) return "40文字以内で入力してください";
+  return ""
+}
+
 class Validation {
   static formValidate = (type: string, value: string) => {
     switch (type) {
@@ -70,6 +102,8 @@ class Validation {
             return passwordcheckValidation(value);
         case "message":
             return messageValidation(value);
+        case "title":
+            return titleValidation(value);
     }
   };
 }

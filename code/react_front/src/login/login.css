@@ -24,6 +24,10 @@
     background-color: rgba(0,0,0,0.5) !important;
 }
 
+.login_content .card-body {
+    padding-top: 5px;
+}
+
 .social_icon span{
     font-size: 60px;
     margin-left: 10px;
@@ -89,6 +93,14 @@ input:focus{
 
 .card-footer {
     display : block;
+}
+
+.login_content .card-footer {
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
 }
 
 .card-footer .d-flex a {

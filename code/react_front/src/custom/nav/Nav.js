@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import {RouteURL, Loading} from "../../assets/Config";
+import {RouteURL, Loading, RefreshToken} from "../../assets/Config";
 import Cookies from 'js-cookie';
 import POPUPbutton from "../../login/js/modal";
 import ReactDOM from 'react-dom';
@@ -17,12 +17,16 @@ class Header extends Component {
     }
 
     componentDidMount() {
+        var main_block = document.getElementById("root");
+        main_block.classList.add("disactive");
         axios.get(RouteURL() + "/userinfo/", {
             headers: {
               Authorization: `JWT `+Cookies.get("myapp")+``
             }
         })
         .then((response) => {
+            RefreshToken();
+            main_block.classList.remove("disactive");
             this.setState({
                 label: "logout",
                 url: "/logout",
@@ -33,8 +37,7 @@ class Header extends Component {
         })
         .catch((error) => {
             var path = window.location.pathname ;
-            console.log(path)
-            if (path.indexOf("user") < 0 && path !== "/login" && path !== "/logout"){
+            if (path.indexOf("user") < 0 && path !== "/login" && path !== "/login/" && path !== "/logout" && path !== "/logout/"){
                 Loading("login");
             }
             const label = Cookies.get("login");
@@ -57,28 +60,27 @@ class Header extends Component {
     }
 
     render(){
-
         return(
-
             <div className="navbar-brand">
                 <a className="navbar-item" href="/">
                   MY TODO APP
                 </a>
-                <div className="user_auth">
-                  <p>{this.state.user}</p>
-                </div>
                 <a role="button" href="/#" className="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
                   <span aria-hidden="true"></span>
                   <span aria-hidden="true"></span>
                   <span aria-hidden="true"></span>
                 </a>
-                <ul className="navbar-nav mr-auto">
-                  <li className="navbar-item">
-                    <a className={this.state.class} href={this.state.url}>{this.state.label}</a>
-                  </li>
-                </ul>
+                <div className="navbox_content">
+                    <div className="user_auth">
+                        <p><i className="fa fa-user-circle-o" aria-hidden="true"></i><span>{this.state.user}</span></p>
+                    </div>
+                    <ul className="navbar-nav mr-auto">
+                        <li className="navbar-item">
+                            <a className={this.state.class} href={this.state.url}>{this.state.label}</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-
         );
     }
 }

@@ -52,8 +52,6 @@ export const UserAuth = (email, password) => {
         "email": email,
         "password": password
     }
-    Cookies.set("email", email)
-    Cookies.set("password", password)
     var token = Cookies.get('myapptodo');
     header["Content-Type"] = "application/json"
     header["Authorization"] = "JWT["+token+"]"
@@ -65,26 +63,43 @@ export const UserAuth = (email, password) => {
         .then((response) => {
             Cookies.set("myapp", response.data.token);
         });
+        Cookies.remove("myapptodo");
     })
     .catch((error) => {
         console.log(error.response)
     });
 }
 
-export const Loading = (info) => {
-  var obj = document.getElementById("loading");
-  obj.classList.add("active");
-  var element = document.getElementById('loading');
-  element.innerHTML = '<div id="loadicon" class="loader"></div>'
-  const item =  () => {
-    obj.classList.remove("active");
-    const block = document.getElementById("loading");
-    const broccoli = block.lastElementChild;
-    block.removeChild(broccoli);
-    if (info === "login"){
-        Cookies.set("login", "login");
-        window.location.href = "/login";
-    }
-  }
-  setTimeout(item, 1000);
+export const RefreshToken = () => {
+    const user_auth = Cookies.get("myapp");
+    header["Authorization"] = "JWT["+user_auth+"]"
+    axios.post(RouteURL() + '/userauth/refresh/', {
+        "token": user_auth,
+    }, header)
+    .then((response) => {
+        Cookies.set("myapp", response.data.token);
+    });
 }
+
+export const Loading = (info) => {
+    var obj = document.getElementById("loading");
+    obj.classList.add("active");
+    var element = document.getElementById('loading');
+    element.innerHTML = '<div id="loadicon" class="loader"></div>'
+    const item =  () => {
+        if (info === "login"){
+            Cookies.set("login", "login");
+            Cookies.remove("myapp");
+            window.location.href = "/login";
+        } else if (info === "userauth") {
+            window.location.href = "/"
+        } else {
+          obj.classList.remove("active");
+          const block = document.getElementById("loading");
+          const broccoli = block.lastElementChild;
+          block.removeChild(broccoli);
+        }
+    }
+    setTimeout(item, 1000);
+}
+

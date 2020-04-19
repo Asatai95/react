@@ -67,3 +67,7 @@ form .field .control .value {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
 }
+
+.control .register.error {
+    padding-bottom: 0;
+}
