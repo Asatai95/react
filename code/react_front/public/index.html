@@ -11,15 +11,50 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
     <title>React App</title>
   </head>
   <body>
-    <nav class="navbar" id="navbar-main" role="navigation" aria-label="main navigation">
-      <div class="container" id="nav_container"></div>
-      <div id="popupwin"></div>
-    </nav>
-    <div class="loading_icon" id="loading"></div>
-    <div class="container" id="root"></div>
+    <div class="wrapper">
+      <div class="sidebar" data-color="green" data-background-color="white">
+        <div class="logo">
+          <a href="/" class="simple-text logo-mini">
+            MY TODO APP
+          </a>
+        </div>
+        <div class="sidebar sidebar-wrapper" id="sidebar"></div>
+        <div class="sidebar-background"></div>
+      </div>
+      <div class="main-panel">
+        <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top" id="navbar-main" >
+          <div class="container" id="nav_container"></div>
+          <div id="popupwin"></div>
+        </nav>
+        <div class="loading_icon" id="loading"></div>
+        <div class="content">
+          <div class="container-fluid">
+            <div class="container" id="root"></div>
+          </div>
+        </div>
+        <footer class="footer">
+          <div class="container-fluid">
+            <nav class="float-left">
+              <ul>
+                <li>
+                  <a href="/">
+                    MY TODO APP
+                  </a>
+                </li>
+              </ul>
+            </nav>
+            <div class="copyright float-right">
+              <a href="https://www.creative-tim.com" target="_blank">TEST APP</a> for a better web.
+            </div>
+            <!-- your footer here -->
+          </div>
+        </footer>
+      </div>
+    </div>
     <script src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>

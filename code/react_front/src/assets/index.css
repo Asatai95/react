@@ -78,9 +78,18 @@ code {
   justify-content: space-around;
 }
 
+.main-panel .navbar-brand.container-fluid .mr-auto {
+  margin-right: 0!important;
+}
+
+.navbar-expand-lg .navbar-collapse {
+  align-items: center;
+}
+
 .navbar-brand .navbox_content .user_auth p {
   font-size: 20px;
   font-weight: 800;
+  margin: 0;
 }
 
 .navbar-brand .navbox_content .user_auth p i {
@@ -96,13 +105,18 @@ code {
   font-weight: 800;
 }
 
+.navbar > .container {
+  padding-left: 0;
+}
+
 .button.is-fullwidth {
 	font-weight: 800;
 }
 
 .container {
 	opacity: 1;
-	transition: fadeOut .8s ease-out;
+  transition: fadeOut .8s ease-out;
+  padding-left: 12%;
 }
 
 .container.disactive {

@@ -294,10 +294,17 @@ class Login(ObtainAuthToken):
             }, status=201)
         return Response(data = {"status": False, "message": serializer.errors}, status=500 )
 
-class Logout(APIView):
+class Logout(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
     def get(self, request, format=None):
-        request.user.auth_token.delete()
-        return Response(status=status.HTTP_200_OK)
+        user_id = request.user.id
+        token = Token.objects.filter(user_id = user_id)
+        if user_id is None or token.first() is None:
+            return Response(data = {"status": False}, status=500)
+        token.delete()
+        return Response(data = {"status": True}, status=201)
 
 class UserRegister(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)

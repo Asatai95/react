@@ -61,7 +61,7 @@ html, body{
 }
 
 .table td.message_li {
-  width: 600px;
+  width: 450px;
   word-break: break-all;
 }
 
@@ -90,7 +90,7 @@ html, body{
 }
 
 .noteIMG {
-  height: 80%;
+  height: 65%;
   display: flex;
   align-items: center;
   justify-content: center;
