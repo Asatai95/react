@@ -102,4 +102,3 @@ export const Loading = (info) => {
     }
     setTimeout(item, 1000);
 }
-

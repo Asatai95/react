@@ -8,22 +8,25 @@ import Login from "./login/App";
 import Register from "./register/App";
 import Header from "./custom/nav/Nav";
 // import Dashbord from "./dashbord/App";
-import Sidebar from "./sidebar/App";
+import Dashtab from "./sidebar/panel/Dashbord";
+// import Usertab from "./sidebar/panel/User";
 import Edit from "./edit/App";
 
 import * as serviceWorker from './serviceWorker';
 
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 const route = (
   <Router>
-    <Route exact path="/" component={App}></Route>
-    {/* <Route exact path="/dashbord" component={Dashbord}></Route> */}
-    <Route exact path="/login" component={Login}></Route>
-    <Route exact path="/logout" component={Login}></Route>
-    <Route exact path="/edit" component={Edit}></Route>
-    <Route exact path="/user/create" component={Register}></Route>
-    <Route exact path="/login/user/:auth" component={Login}></Route>
+    <Switch>
+      <Route exact path="/" component={App}></Route>
+      {/* <Route exact path="/dashbord" component={Dashbord}></Route> */}
+      <Route exact path="/login" component={Login}></Route>
+      <Route exact path="/logout" component={Login}></Route>
+      <Route exact path="/edit" component={Edit}></Route>
+      <Route exact path="/user/create" component={Register}></Route>
+      <Route exact path="/login/user/:auth" component={Login}></Route>
+    </Switch>
   </Router>
 );
 
@@ -31,6 +34,6 @@ ReactDOM.render(route, document.getElementById('root'));
 
 ReactDOM.render(<Header />, document.getElementById('nav_container'));
 
-ReactDOM.render(<Sidebar />, document.getElementById('sidebar'));
+ReactDOM.render(<Dashtab />, document.getElementById('sidebar'));
 
 serviceWorker.unregister();
