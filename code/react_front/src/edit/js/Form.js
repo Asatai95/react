@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './edit.css';
+import '../edit.css';
 import CSRFToken from '../../csrftoken';
 
 export default class Form extends Component {
@@ -87,7 +87,7 @@ export default class Form extends Component {
                     <button type="button" className="btn btn-primary pull-right" disabled={this.props.flag}>ERROR</button>
                 )}
                 {!this.props.flag && (
-                    <button type="submit" className="btn btn-primary pull-right" disabled={this.props.flag}>Update Profile</button>
+                    <button type="submit" className="btn btn-primary pull-right" onClick={this.props.handleSubmit} disabled={this.props.flag}>Update Profile</button>
                 )}
                 {this.props.detail_error && (
                     <p className="error login_form">{this.props.detail_error}</p>
