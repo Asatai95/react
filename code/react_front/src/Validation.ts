@@ -89,6 +89,17 @@ const titleValidation = (title: string): string => {
   return ""
 }
 
+const formValidation = (info: string): string => {
+  var flag;
+  var reg = new RegExp(/^[ｦ-ﾟ]*$/);
+  for (var i = 0; i < info.length; i++){
+    if (reg.test(info[i])) flag = false;
+  }
+  if (flag === false) return "半角カタカナを使用できません";
+  if (info.length > 40) return "40文字以内で入力してください";
+  return ""
+}
+
 class Validation {
   static formValidate = (type: string, value: string) => {
     switch (type) {
@@ -97,6 +108,7 @@ class Validation {
         case 'password':
             return passwordValidation(value);
         case "name":
+        case "username":
             return usernameValidation(value);
         case "password_check":
             return passwordcheckValidation(value);
@@ -104,6 +116,8 @@ class Validation {
             return messageValidation(value);
         case "title":
             return titleValidation(value);
+        default:
+            return formValidation(value);
     }
   };
 }

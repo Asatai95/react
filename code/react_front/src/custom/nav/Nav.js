@@ -34,7 +34,7 @@ class Header extends Component {
             RefreshToken();
             main_block.classList.remove("disactive");
             this.setState({
-                label: "logout",
+                label: "Sign Out",
                 url: "/logout",
                 class: "link_logout",
                 user: response.data.username,
@@ -47,6 +47,8 @@ class Header extends Component {
                 Loading("login");
             }
             const label = Cookies.get("login");
+            console.log("login")
+            console.log(label)
             if (label === "login"){
                 Cookies.remove("login")
                 ReactDOM.render(
@@ -57,7 +59,7 @@ class Header extends Component {
                 );
             }
             this.setState({
-                label: "login",
+                label: "Sign In",
                 url: "/login",
                 class: "link_login",
                 isToggleOn: false

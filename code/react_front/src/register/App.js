@@ -184,6 +184,9 @@ class Register extends Component {
       }
     }
     componentDidMount(){
+      var main_bc = document.getElementById("wrapper");
+      main_bc.classList.add("login");
+
       const d = {
         "username": Cookies.get("username"),
         "password": Cookies.get("password"),

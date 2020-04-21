@@ -20,8 +20,8 @@ class Login extends Component {
           flag: false,
         };
 
-        this.handleSubmit = this.handleSubmit.bind(this)
-        this.handleChange = this.handleChange.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.model = React.createRef()
     }
 
@@ -56,7 +56,14 @@ class Login extends Component {
       }
     }
 
+    // componentWillMount() {
+
+    // }
+
     componentDidMount(){
+        var main_bc = document.getElementById("wrapper");
+        main_bc.classList.add("login");
+
         const path = window.location.pathname;
         if (path === "/logout"){
             Loading("logout");

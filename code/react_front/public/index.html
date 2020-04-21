@@ -12,10 +12,138 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <style type="text/css">
+      .reload {
+        height: 100vh;
+        width: 100%;
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        opacity: 1;
+        background: rgb(255,255,255);
+      }
+      .reload .reload_block {
+        width: 100%;
+        height: 100vh;
+        z-index: 10;
+        position: relative;
+      }
+      .reload .loading_icon {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+      }
+      .reload .loading_icon.active {
+        display: flex;
+      }
+      .reload .loading_icon .content {
+        height: 200px;
+      }
+      .reload .loading_icon .content .logo_img {
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+      }
+      .reload .loading_icon .content .logo_img img {
+        width: 50px;
+        margin-right: 3px;
+      }
+      .reload .loading_icon .content .logo_img span {
+        font-size: 20px;
+        font-weight: 800;
+        color: #0099FF;
+      }
+      .reload .loader,
+      .reload .loader:before,
+      .reload .loader:after {
+        background: #99FFFF;
+        -webkit-animation: load1 1s infinite ease-in-out;
+        animation: load1 1s infinite ease-in-out;
+        width: 1em;
+        height: 4em;
+        border: none!important;
+      }
+      .reload .loader {
+        color: #99FFFF;
+        text-indent: -9999em;
+        margin: 35px auto;
+        position: relative;
+        font-size: 15px;
+        -webkit-transform: translateZ(0);
+        -ms-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-animation-delay: -0.16s;
+        animation-delay: -0.16s;
+      }
+      .reload .loader:before,
+      .reload .loader:after {
+        position: absolute;
+        top: 0;
+        content: '';
+        border-radius: 290486px;
+      }
+      .reload .loader:before {
+        left: -1.5em;
+        -webkit-animation-delay: -0.32s;
+        animation-delay: -0.32s;
+      }
+      .reload .loader:after {
+        left: 1.5em;
+      }
+      nav , .sidebar, footer {
+        display: none;
+      }
+      @-webkit-keyframes load1 {
+        0%,
+        80%,
+        100% {
+          box-shadow: 0 0;
+          height: 4em;
+        }
+        40% {
+          box-shadow: 0 -2em;
+          height: 5em;
+        }
+      }
+      @keyframes load1 {
+        0%,
+        80%,
+        100% {
+          box-shadow: 0 0;
+          height: 4em;
+        }
+        40% {
+          box-shadow: 0 -2em;
+          height: 5em;
+        }
+      }
+    </style>
     <title>React App</title>
   </head>
   <body>
-    <div class="wrapper">
+    <div class="reload">
+      <div class="reload_block">
+          <div class="loading_icon">
+            <div class="content">
+              <div class="logo_img">
+                <img src="https://res.cloudinary.com/db5nsevmi/image/upload/v1587450913/logo192.png" alt="">
+                <span>MyAPP TODO</span>
+              </div>
+              <div id="loadicon" class="loader"></div>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div class="wrapper" id="wrapper">
       <div class="sidebar" data-color="green" data-background-color="white">
         <div class="logo">
           <a href="/" class="simple-text logo-mini">

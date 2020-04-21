@@ -1,0 +1,22 @@
+.card.card-profile,
+.card.userprofile  {
+    background-color: rgb(255,255,255)!important;
+}
+
+.container-fluid.user-edit-field {
+    height: 450px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.container-fluid.user-edit-field #root .container-fluid {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.container-fluid.user-edit-field .edit_user_formbox,
+.container-fluid.user-edit-field .userprofile {
+    width: 100%;
+}

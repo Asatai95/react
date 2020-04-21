@@ -130,9 +130,19 @@ class UserInfo(generics.RetrieveAPIView):
     serializer_class = CreateUserSerializer
 
     def get(self, request, format=None):
+
+        if request.user.first_name == "":
+            print("passsss")
+            request.user.first_name = "user"
+        if request.user.last_name == "":
+            request.user.last_name = "name"
+
         return Response(data={
             'username': request.user.username,
             'email': request.user.email,
+            'image': request.user.image,
+            'firstname': request.user.first_name,
+            'lastname': request.user.last_name,
             'id': request.user.id,
         },
         status=201)
@@ -157,7 +167,6 @@ def testAPI(request):
         data = JSONParser().parse(request)
         if ErrorFlag(data) is True:
             user = request.user
-            print(user.id)
             serializer = TodoSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
@@ -319,6 +328,7 @@ class UserRegister(generics.CreateAPIView):
 
             table = User.objects.filter(id=int(serializer.data["id"])).first()
             table.password = make_password(table.password)
+            table.image = "https://res.cloudinary.com/db5nsevmi/xgw83qinukoywqafefqm"
             table.is_active = False
             table.save()
 
