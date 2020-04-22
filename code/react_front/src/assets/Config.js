@@ -78,6 +78,7 @@ export const RefreshToken = () => {
     }, header)
     .then((response) => {
         Cookies.set("myapp", response.data.token);
+        // header[""]
     });
 }
 

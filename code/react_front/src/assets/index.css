@@ -46,6 +46,15 @@ a {
   text-decoration: none;
 }
 
+ul {
+  margin: auto;
+  margin-left: 0;
+}
+
+ul li {
+  list-style: none;
+}
+
 /* -------------------------------リセットcss--------------------------------------- */
 
 /* リローディング */

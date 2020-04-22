@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import './edit.css';
 import axios from 'axios';
 import {RouteURL} from "../assets/Config";
@@ -6,7 +7,7 @@ import Cookies from 'js-cookie';
 import Form from "./js/Form";
 import Validation from "../Validation";
 import {Image} from 'cloudinary-react';
-
+import POPUPbutton from '../login/js/modal';
 
 class Edit extends Component {
     _isMounted = false;
@@ -115,19 +116,71 @@ class Edit extends Component {
 
     handleSubmit(event){
         event.preventDefault();
-        console.log(event)
-        const { username, email, firstname, lastname } = this.state;
+        const { username, email } = this.state;
+        var {firstname, lastname} = this.state;
+        console.log(firstname)
+        if (firstname === ""){firstname = "MYAPP"}
+        if (lastname === ""){lastname = "USER"}
+        console.log(firstname)
         const conf = {
             'username':username,
             'email': email,
-            'firstname': firstname,
-            'lastname': lastname
+            'first_name': firstname,
+            'last_name': lastname
         };
-        console.log(conf)
+
+        axios.put(RouteURL() + "/user/update/", conf, {
+            headers: {
+                Authorization: `JWT `+Cookies.get("myapp")+``
+            }
+        })
+        .then((response) => {
+            var obj = document.getElementById("loading");
+            obj.classList.add("active");
+            var element = document.getElementById('loading');
+            element.innerHTML = '<div id="loadicon" class="loader"></div>'
+            const item =  () => {
+                obj.classList.remove("active");
+                this.setState({
+                    "username": response.data.username,
+                    "email": response.data.email,
+                    "firstname": response.data.first_name,
+                    "lastname": response.data.last_name,
+                })
+                const elm = document.getElementById('popupwin');
+                elm.classList.add("popupwin_active")
+                ReactDOM.render(<POPUPbutton
+                    info="useredit"
+                />, elm);
+            }
+            setTimeout(item, 800);
+        })
+        .catch((error) => {
+            if (error.response !== undefined){
+                var label = Object.keys(error.response.data)
+                for (var i = 0 ; i < label.length; i++){
+                    var value = error.response.data[label[i]]
+                    var error_label = label[i] + "_error"
+                    this.setState({
+                        [error_label]: value,
+                    });
+                }
+            }
+        });
     }
 
     render(){
-        var flag_label;
+
+        var flag_label = true
+        var label = Object.keys(this.state)
+        for (var i = 0; i < label.length; i++){
+            if (label[i].indexOf("_error") > -1 && this.state[label[i]] !== ""){
+                flag_label = "disable";
+            }
+        }
+        if (flag_label === true){
+            flag_label = "";
+        }
 
         return (
             <div className="content">
@@ -173,10 +226,14 @@ class Edit extends Component {
                             <div className="card-body">
                                 <h6 className="card-category text-gray">{this.state.firstname} / {this.state.lastname} </h6>
                                 <div className="userinfocontent">
-                                    <ul>
-                                        <li>{this.state.username}</li>
-                                        <li>{this.state.email}</li>
-                                    </ul>
+                                    <div>
+                                        <span>ユーザー名</span>
+                                        <p>{this.state.username}</p>
+                                    </div>
+                                    <div>
+                                        <span>メールアドレス</span>
+                                        <p>{this.state.email}</p>
+                                    </div>
                                 </div>
                                 <a href="/#" className="btn btn-primary btn-round">Follow</a>
                             </div>

@@ -44,6 +44,7 @@ class Header extends Component {
         .catch((error) => {
             var path = window.location.pathname ;
             if (path.indexOf("user") < 0 && path !== "/login" && path !== "/login/" && path !== "/logout" && path !== "/logout/"){
+                Cookies.remove("tab")
                 Loading("login");
             }
             const label = Cookies.get("login");

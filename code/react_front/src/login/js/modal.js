@@ -20,6 +20,8 @@ class POPUPbutton extends Component {
             info = "ユーザーを仮登録しました"
         } else if (this.props.info === "authuser"){
             info = "ユーザーを本登録しました"
+        } else if (this.props.info === "useredit"){
+            info = "情報変更しました"
         } else {
             info = "ログインしてください"
         }

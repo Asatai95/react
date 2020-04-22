@@ -45,14 +45,16 @@ from .config.view_auth import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from rest_framework import routers, viewsets, generics, serializers, filters, authentication, permissions
+from rest_framework import routers, viewsets, generics, serializers, authentication, permissions
+from rest_framework import filters as rest_filters
 from .config.auth import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import (
-    TodoSerializer, UserSerializer, CreateUserSerializer, UserFilter, AccountSerializer, UserAuthentication
+    TodoSerializer, UserSerializer, CreateUserSerializer, UserFilter, AccountSerializer, UserAuthentication, UserUpdateSerializer,
 )
 from django.views.decorators.csrf import csrf_exempt
+from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import AuthenticationFailed
 
@@ -220,7 +222,7 @@ def UserCreatAuth(request):
 class SearchGETAPI(generics.ListAPIView):
     queryset = Todo.objects.all()
     serializer_class = TodoSerializer
-    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    filter_backends = [rest_filters.SearchFilter, DjangoFilterBackend]
 
     def get_queryset(self):
         label = self.request.query_params.get("label")
@@ -350,6 +352,21 @@ class UserRegister(generics.CreateAPIView):
             return Response(serializer.data, status=201)
 
         return Response(serializer.errors, status=500)
+
+class UserUpdateInfo(generics.RetrieveUpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    authtication_classes = (JSONWebTokenAuthentication, )
+    queryset = User.objects.all()
+    serializer_class = UserUpdateSerializer
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        pk = queryset.get(pk=self.request.user.pk)
+        self.check_object_permissions(self.request, pk)
+        return pk
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
 
 class UserRegisterChecker(generic.ListView):
     timeout_seconds = getattr(settings, 'ACTIVATION_TIMEOUT_SECONDS', 60*60*24)

@@ -16,7 +16,7 @@ export default class Form extends Component {
                                 type="text"
                                 name="username"
                                 id="username"
-                                placeholder="Username"
+                                placeholder="Username(*必須)"
                                 value={this.props.username}
                                 onChange={this.props.handleChange}
                                 onClick={this.props.handleClick}
@@ -77,7 +77,7 @@ export default class Form extends Component {
                                 type="text"
                                 name="email"
                                 id="email"
-                                placeholder="Email address"
+                                placeholder="Email address(*必須)"
                                 value={this.props.email}
                                 onChange={this.props.handleChange}
                                 onClick={this.props.handleClick}
@@ -101,11 +101,9 @@ export default class Form extends Component {
                     <button
                         className="btn btn-primary pull-right"
                         type="submit"
-                        value="Update Profile"
                         disabled={this.props.flag}
-                        onSubmit={this.props.handleSubmit}
-                    ></button>
-
+                        onClick={this.props.handleSubmit}
+                    >Update Profile</button>
                 )}
                 {/* <input
                         className="btn btn-primary pull-right"

@@ -6,6 +6,7 @@ from django_filters import rest_framework as filters
 import sys
 from django.core import exceptions
 import django.contrib.auth.password_validation as validators
+from rest_framework.validators import UniqueValidator
 
 Get_user = get_user_model()
 
@@ -26,10 +27,19 @@ class UserFilter(serializers.ModelSerializer):
         }
 
 class UserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
 
     class Meta:
         model = User
         fields = ('id', 'username', 'password', 'email', "message", 'date_joined')
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'date_joined')
 
 class CreateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False)
@@ -56,7 +66,6 @@ class UserAuthentication(serializers.ModelSerializer):
 
 class AccountSerializer(serializers.ModelSerializer):
     username = serializers.CharField(max_length=150)
-    # email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
 
     class Meta:
         model = User
