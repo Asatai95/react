@@ -46,13 +46,14 @@ class Dashtab extends Component {
 
   componentDidMount(){
     var tab = Cookies.get("tab")
-    console.log("tab")
+    var url = window.location.pathname;
+
     if (tab !== undefined){
       tabaction(tab);
-      if (tab === "dash") {
+      if (tab === "dash" && url !== "/"+tab) {
         window.history.replaceState('','','/');
         ReactDOM.render(<App />, document.getElementById('root'));
-      } else if (tab === "edit") {
+      } else if (tab === "edit" && url !== "/"+tab) {
         window.history.replaceState('','','/edit');
         ReactDOM.render(<Edit />, document.getElementById('root'));
       }

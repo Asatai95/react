@@ -20,3 +20,25 @@
 .container-fluid.user-edit-field .userprofile {
     width: 100%;
 }
+
+.user-edit-field form .form-group.bmd-form-group input {
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.userprofile .card-header.card-header-primary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.userprofile .card-header.card-header-primary  h4 {
+    margin: 0;
+}
+
+.error.edit_form {
+    color: red;
+    font-size: 15px;
+    font-weight: 800;
+    text-align: left;
+}

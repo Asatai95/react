@@ -7,31 +7,34 @@ import Form from "./js/Form";
 import Validation from "../Validation";
 import {Image} from 'cloudinary-react';
 
+
 class Edit extends Component {
     _isMounted = false;
     constructor(props) {
         super(props);
         this.state = {
-          username: "",
-          firstname: "",
-          lastname: "",
-          email: "",
-          image: "",
-          username_error: "",
-          firstname_error: "",
-          lastname_error: "",
-          email_error: "",
-          image_error: "",
-          detail_error: "",
+            username: "",
+            firstname: "",
+            lastname: "",
+            email: "",
+            image: "",
+            field_filled: "",
+            username_error: "",
+            firstname_error: "",
+            lastname_error: "",
+            email_error: "",
+            image_error: "",
+            detail_error: "",
         };
 
         this.handleChange = this.handleChange.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        this.onBlurFunc = this.onBlurFunc.bind(this);
         this.uploadImage = this.uploadImage.bind(this);
-        // this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount(){
-        console.log("component")
         this._isMounted = true;
         axios.get(RouteURL() + "/userinfo/", {
             headers: {
@@ -39,24 +42,39 @@ class Edit extends Component {
             }
         })
         .then((response) => {
-            console.log(response)
             this.setState({
-                "username": response.data.username,
-                "email": response.data.email,
-                "image": response.data.image,
-                "firstname": response.data.firstname,
-                "lastname": response.data.lastname,
+                username: response.data.username,
+                email: response.data.email,
+                image: response.data.image,
+                firstname: response.data.firstname,
+                lastname: response.data.lastname,
             })
         });
     }
 
-    componentWillUnmount() {
-        this._isMounted = false;
+    onBlurFunc(event){
+        var value = event.target.value.trim()
+        var id = event.target.id;
+        const elm = document.getElementById(id+"_field");
+        if (value === "" && elm.classList.contains("is-filled") === true){
+            for (var i = 0; i < elm.classList.length; i++){
+                if (elm.classList[i] === "is-filled"){
+                    elm.classList.remove(elm.classList[i])
+                }
+            }
+        }
+    }
+
+    handleClick(event){
+        var value = event.target.value.trim()
+        var id = event.target.id;
+        const elm = document.getElementById(id+"_field");
+        if (value === "" && elm.classList.contains("is-filled") === false){
+            elm.classList.add("is-filled")
+        }
     }
 
     handleChange(event){
-        console.log("event")
-        console.log(event)
         var value = event.target.value.trim();
         if (event.target.name === 'email') {
             if (this.state.email !== value && this.state.detail_error !== "") {
@@ -91,10 +109,26 @@ class Edit extends Component {
 
     }
 
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+
+    handleSubmit(event){
+        event.preventDefault();
+        console.log(event)
+        const { username, email, firstname, lastname } = this.state;
+        const conf = {
+            'username':username,
+            'email': email,
+            'firstname': firstname,
+            'lastname': lastname
+        };
+        console.log(conf)
+    }
+
     render(){
         var flag_label;
-        console.log("state")
-        console.log(this.state)
+
         return (
             <div className="content">
                 <div className="container-fluid user-edit-field">
@@ -119,7 +153,9 @@ class Edit extends Component {
                                         password_error={this.state.password_error}
                                         detail_error={this.state.detail_error}
                                         handleChange={this.handleChange}
-                                        // handleSubmit={this.handleSubmit}
+                                        handleClick={this.handleClick}
+                                        onBlurFunc={this.onBlurFunc}
+                                        handleSubmit={this.handleSubmit}
                                         flag={flag_label}
                                     />
                                 </div>

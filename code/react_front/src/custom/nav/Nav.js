@@ -47,8 +47,6 @@ class Header extends Component {
                 Loading("login");
             }
             const label = Cookies.get("login");
-            console.log("login")
-            console.log(label)
             if (label === "login"){
                 Cookies.remove("login")
                 ReactDOM.render(
