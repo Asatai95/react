@@ -90,12 +90,12 @@ export default class Form extends Component {
                     </div>
                 </div>
                 {this.props.flag && (
-                    <input
+                    <button
                         className="btn btn-primary pull-right"
-                        type="submit"
-                        value="ERROR"
+                        type="button"
                         disabled={this.props.flag}
-                    />
+                        onClick={this.props.handleSubmit}
+                    >ERROR</button>
                 )}
                 {!this.props.flag && (
                     <button
@@ -105,12 +105,6 @@ export default class Form extends Component {
                         onClick={this.props.handleSubmit}
                     >Update Profile</button>
                 )}
-                {/* <input
-                        className="btn btn-primary pull-right"
-                        type="submit"
-                        value="Update Profile"
-                        disabled={this.props.flag}
-                    /> */}
                 {this.props.detail_error && (
                     <p className="error edit_form">{this.props.detail_error}</p>
                 )}

@@ -74,6 +74,17 @@ export default class PopAPP extends React.Component {
     })
     if (!this.state.isShown) {
       this.setState({ visibilityStyle: "hidden" })
+
+      const obj = document.getElementById("popupwin");
+      obj.classList.remove("popupwin_active")
+      this.setState({
+        isShown: false,
+        isPoseCompleted: false,
+        dismissesByDrag: false,
+        visibilityStyle: "hidden",
+        swiper: null,
+      })
+
     }
     if (this.state.swiper === null) {
       const swiper = new Swiper(".swiper-container", {
@@ -97,8 +108,8 @@ export default class PopAPP extends React.Component {
       isPoseCompleted: false,
       dismissesByDrag: false,
     })
-    const obj= document.getElementById('popupwin');
-    obj.classList.remove("popupwin_active")
+    const obj = document.getElementById("popupwin");
+    obj.classList.remove("item")
     this.props.onClose()
   }
 

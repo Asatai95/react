@@ -7,6 +7,7 @@ import sys
 from django.core import exceptions
 import django.contrib.auth.password_validation as validators
 from rest_framework.validators import UniqueValidator
+import requests
 
 Get_user = get_user_model()
 
@@ -33,6 +34,12 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'password', 'email', "message", 'date_joined')
 
+def Item(value):
+    print(value)
+    url = requests.get(value)
+    if url.status_code != 200:
+        raise serializers.ValidationError('処理中にエラーが発生しました')
+
 class UserUpdateSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
@@ -40,6 +47,13 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'first_name', 'last_name', 'email', 'date_joined')
+
+class UserUpdateImage(serializers.ModelSerializer):
+    image = serializers.CharField(validators=[Item], required=False)
+
+    class Meta:
+        model = User
+        fields = ('image',)
 
 class CreateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False)

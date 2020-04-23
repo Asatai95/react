@@ -52,6 +52,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import (
     TodoSerializer, UserSerializer, CreateUserSerializer, UserFilter, AccountSerializer, UserAuthentication, UserUpdateSerializer,
+    UserUpdateImage
 )
 from django.views.decorators.csrf import csrf_exempt
 from django_filters import rest_framework as filters
@@ -357,7 +358,7 @@ class UserUpdateInfo(generics.RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
     authtication_classes = (JSONWebTokenAuthentication, )
     queryset = User.objects.all()
-    serializer_class = UserUpdateSerializer
+    # serializer_class = UserUpdateSerializer
 
     def get_object(self):
         queryset = self.get_queryset()
@@ -366,7 +367,20 @@ class UserUpdateInfo(generics.RetrieveUpdateAPIView):
         return pk
 
     def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
+        # user = User.objects.filter(id = self.request.user.id)
+        # serializer = UserUpdateSerializer().update(instance=user.first(), validated_data=request.data)
+        print(self.request.data)
+        user = User.objects.get(email=self.request.user.email)
+        try :
+            image = self.request.data["image"]
+            serializer = UserUpdateImage(user, self.request.data)
+        except :
+            serializer = UserUpdateSerializer(user, self.request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.error, status=500)
 
 class UserRegisterChecker(generic.ListView):
     timeout_seconds = getattr(settings, 'ACTIVATION_TIMEOUT_SECONDS', 60*60*24)

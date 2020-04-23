@@ -31,6 +31,7 @@ urlpatterns = [
     path('api/token/refresh/', refresh_jwt_token),
     path("user/info/session/", views.UserCreatAuth),
     path("userinfo/", views.UserInfo.as_view()),
+    path("todoinfo/", views.TestAPI.as_view()),
     # path("userinfo/<str:pk>/", views.UserInfo.as_view()),
     path("login/", views.Login.as_view(), name='login'),
     path("login/api/", views.Login.as_view()),

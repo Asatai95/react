@@ -6,7 +6,7 @@ import {RouteURL} from "../assets/Config";
 import Cookies from 'js-cookie';
 import Form from "./js/Form";
 import Validation from "../Validation";
-import {Image} from 'cloudinary-react';
+// import {Image} from 'cloudinary-react';
 import POPUPbutton from '../login/js/modal';
 
 class Edit extends Component {
@@ -19,6 +19,7 @@ class Edit extends Component {
             lastname: "",
             email: "",
             image: "",
+            total: "",
             field_filled: "",
             username_error: "",
             firstname_error: "",
@@ -33,6 +34,26 @@ class Edit extends Component {
         this.onBlurFunc = this.onBlurFunc.bind(this);
         this.uploadImage = this.uploadImage.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    componentWillMount(){
+        axios.get(RouteURL() + "/todoinfo/", {
+            headers : {
+                Authorization: `JWT `+Cookies.get("myapp")+``
+            }
+        })
+        .then((response) => {
+            const tmp_list = []
+            for (var x = 0; x < response.data.length; x++ ){
+                if (response.data[x].user_id === 24){
+                    tmp_list.push(response.data[x])
+                }
+            }
+            const count = tmp_list.length;
+            this.setState({
+                total: count
+            });
+        });
     }
 
     componentDidMount(){
@@ -104,10 +125,34 @@ class Edit extends Component {
     }
 
     uploadImage(event){
-        console.log(event)
-        var elm = event.parentElement();
-        console.log(elm)
-
+        event.preventDefault();
+        const myWidget = () => window.cloudinary.createUploadWidget({
+            cloudName: 'db5nsevmi', uploadPreset: 'rlsb6fko'}, (error, result) => {
+                if (!error && result && result.event === "success") {
+                    const d = {
+                        'image': result.info.url
+                    }
+                    axios.put(RouteURL() + "/user/update/", d, {
+                        headers: {
+                            Authorization: `JWT `+Cookies.get("myapp")+``
+                        }
+                    })
+                    .then((response) => {
+                        this.setState({
+                            "image": response.data.image
+                        })
+                    })
+                    .catch((error) => {
+                        var label = Object.keys(error.response.data)
+                        var value = error.response.data[label]
+                        this.setState({
+                            "image_error": value,
+                        });
+                    });
+                }
+            }
+        );
+        myWidget().open();
     }
 
     componentWillUnmount() {
@@ -118,10 +163,8 @@ class Edit extends Component {
         event.preventDefault();
         const { username, email } = this.state;
         var {firstname, lastname} = this.state;
-        console.log(firstname)
         if (firstname === ""){firstname = "MYAPP"}
         if (lastname === ""){lastname = "USER"}
-        console.log(firstname)
         const conf = {
             'username':username,
             'email': email,
@@ -135,6 +178,7 @@ class Edit extends Component {
             }
         })
         .then((response) => {
+            var flag = true;
             var obj = document.getElementById("loading");
             obj.classList.add("active");
             var element = document.getElementById('loading');
@@ -150,10 +194,11 @@ class Edit extends Component {
                 const elm = document.getElementById('popupwin');
                 elm.classList.add("popupwin_active")
                 ReactDOM.render(<POPUPbutton
+                    elmflag={flag}
                     info="useredit"
                 />, elm);
             }
-            setTimeout(item, 800);
+            setTimeout(item, 1000);
         })
         .catch((error) => {
             if (error.response !== undefined){
@@ -220,22 +265,25 @@ class Edit extends Component {
                             <div className="card-avatar">
                                 <a href="/#" onClick={this.uploadImage}>
                                     <img className="user_img" src={this.state.image} alt=""/>
-                                    <Image cloudName="db5nsevmi" publicId="userimg" crop="scale" />
                                 </a>
                             </div>
                             <div className="card-body">
                                 <h6 className="card-category text-gray">{this.state.firstname} / {this.state.lastname} </h6>
                                 <div className="userinfocontent">
                                     <div>
-                                        <span>ユーザー名</span>
+                                        <p className="label">ユーザー名</p>
                                         <p>{this.state.username}</p>
                                     </div>
                                     <div>
-                                        <span>メールアドレス</span>
+                                        <p className="label">メールアドレス</p>
                                         <p>{this.state.email}</p>
                                     </div>
+                                    <div>
+                                        <p className="label">TODO</p>
+                                        <p>{this.state.total}</p>
+                                    </div>
                                 </div>
-                                <a href="/#" className="btn btn-primary btn-round">Follow</a>
+                                {/* <a href="/#" className="btn btn-primary btn-round">Follow</a> */}
                             </div>
                         </div>
                     </div>
