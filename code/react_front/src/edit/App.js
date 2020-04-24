@@ -5,6 +5,7 @@ import axios from 'axios';
 import {RouteURL} from "../assets/Config";
 import Cookies from 'js-cookie';
 import Form from "./js/Form";
+import FormPassword from "./js/FormPassword";
 import Validation from "../Validation";
 // import {Image} from 'cloudinary-react';
 import POPUPbutton from '../login/js/modal';
@@ -20,20 +21,28 @@ class Edit extends Component {
             email: "",
             image: "",
             total: "",
+            is_change: false,
             field_filled: "",
+            password: "",
+            password_check: "",
             username_error: "",
             firstname_error: "",
             lastname_error: "",
             email_error: "",
+            password_error: "",
+            password_check_error: "",
             image_error: "",
             detail_error: "",
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
+        this.handleChangePassword = this.handleChangePassword.bind(this);
         this.onBlurFunc = this.onBlurFunc.bind(this);
         this.uploadImage = this.uploadImage.bind(this);
+        this.passChangebt = this.passChangebt.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handlePasswordSubmit = this.handlePasswordSubmit.bind(this)
     }
 
     componentWillMount(){
@@ -109,18 +118,24 @@ class Edit extends Component {
                 email_error: Validation.formValidate(event.target.name, value)
             });
         }
-        else if (event.target.name === 'username') {
-            this.setState({
-                username: value,
-                username_error: Validation.formValidate(event.target.name, value)
-            });
-        }
-        else if (event.target.name === 'firstname' || event.target.name === 'lastname') {
-            const name_item = event.target.name + "_error";
+        else  {
+            const error_label = event.target.name + "_error";
             this.setState({
                 [event.target.name]: value,
-                [name_item]: Validation.formValidate(event.target.name, value)
+                [error_label]: Validation.formValidate(event.target.name, value)
             });
+            if (event.target.name === "password_check") {
+                if (this.state.password_check !== value && this.state.detail_error !== ""){
+                    this.setState({
+                        detail_error: ""
+                    })
+                }
+                if (value !== this.state.password){
+                    this.setState({
+                        password_check_error: "パスワードは確認用には同一値を入力してください"
+                    })
+                }
+            }
         }
     }
 
@@ -157,6 +172,18 @@ class Edit extends Component {
 
     componentWillUnmount() {
         this._isMounted = false;
+    }
+
+    handleChangePassword(){
+        if (this.state.is_change === false){
+            this.setState({
+                "is_change": true
+            })
+        } else {
+            this.setState({
+                "is_change": false
+            })
+        }
     }
 
     handleSubmit(event){
@@ -214,8 +241,62 @@ class Edit extends Component {
         });
     }
 
-    render(){
+    passChangebt(event){
+        event.preventDefault()
+        const classname = event.target.className.split(" ");
+        const elm = document.getElementById(classname[1]);
+        if (elm.type === "text"){
+            elm.type = "password"
+        } else {
+            elm.type = "text"
+        }
+    }
 
+    handlePasswordSubmit(event){
+        event.preventDefault();
+        const {password, password_check} = this.state;
+        const conf = {
+            "password": password,
+            "password_check": password_check
+        }
+
+        axios.put(RouteURL() + "/user/password/update/", conf, {
+            headers: {
+                Authorization: `JWT `+Cookies.get("myapp")+``
+            }
+        })
+        .then((response) => {
+            var flag = true;
+            var obj = document.getElementById("loading");
+            obj.classList.add("active");
+            var element = document.getElementById('loading');
+            element.innerHTML = '<div id="loadicon" class="loader"></div>'
+            const item =  () => {
+                this.setState({
+                    password: "",
+                    password_check: "",
+                    is_change: false,
+                })
+                obj.classList.remove("active");
+                const elm = document.getElementById('popupwin');
+                elm.classList.add("popupwin_active")
+                ReactDOM.render(<POPUPbutton
+                    elmflag={flag}
+                    info="useredit"
+                />, elm);
+            }
+            setTimeout(item, 1000);
+        })
+        .catch((error) => {
+            var label = Object.keys(error.response.data)
+            var value = error.response.data[label]
+            this.setState({
+                detail_error: value,
+            });
+        })
+    }
+
+    render(){
         var flag_label = true
         var label = Object.keys(this.state)
         for (var i = 0; i < label.length; i++){
@@ -232,32 +313,63 @@ class Edit extends Component {
                 <div className="container-fluid user-edit-field">
                     <div className="row col-md-7">
                         <div className="edit_user_formbox">
-                            <div className="card userprofile">
-                                <div className="card-header card-header-primary">
-                                    <h4 className="card-title">Edit Profile</h4>
-                                    <p className="card-category">Complete your profile</p>
+                            {this.state.is_change === false && (
+                                <div className="card userprofile">
+                                    <div className="card-header card-header-primary">
+                                        <h4 className="card-title">Edit Profile</h4>
+                                        <p className="card-category">Complete your profile</p>
+                                    </div>
+                                    <div className="card-body">
+                                        <Form
+                                            username={this.state.username}
+                                            firstname={this.state.firstname}
+                                            lastname={this.state.lastname}
+                                            email={this.state.email}
+                                            password={this.state.password}
+                                            username_error={this.state.username_error}
+                                            firstname_error={this.state.firstname_error}
+                                            lastname_error={this.state.lastname_error}
+                                            email_error={this.state.email_error}
+                                            password_error={this.state.password_error}
+                                            detail_error={this.state.detail_error}
+                                            handleChange={this.handleChange}
+                                            handleClick={this.handleClick}
+                                            onBlurFunc={this.onBlurFunc}
+                                            handleSubmit={this.handleSubmit}
+                                            flag={flag_label}
+                                        />
+                                        <div className="changepassbt">
+                                            <button type="button" onClick={this.handleChangePassword} className="changeBt btn btn-info">PASSWORD CHANGE</button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="card-body">
-                                    <Form
-                                        username={this.state.username}
-                                        firstname={this.state.firstname}
-                                        lastname={this.state.lastname}
-                                        email={this.state.email}
-                                        password={this.state.password}
-                                        username_error={this.state.username_error}
-                                        firstname_error={this.state.firstname_error}
-                                        lastname_error={this.state.lastname_error}
-                                        email_error={this.state.email_error}
-                                        password_error={this.state.password_error}
-                                        detail_error={this.state.detail_error}
-                                        handleChange={this.handleChange}
-                                        handleClick={this.handleClick}
-                                        onBlurFunc={this.onBlurFunc}
-                                        handleSubmit={this.handleSubmit}
-                                        flag={flag_label}
-                                    />
+                            )}
+                            {this.state.is_change === true && (
+                                <div className="card userprofile">
+                                    <div className="card-header card-header-primary">
+                                        <h4 className="card-title">Edit Password</h4>
+                                        <p className="card-category">Complete your password</p>
+                                    </div>
+                                    <div className="card-body">
+                                        <FormPassword
+                                            password={this.state.password}
+                                            password_check={this.state.password_check}
+                                            password_error={this.state.password_error}
+                                            password_check_error={this.state.password_check_error}
+                                            detail_error={this.state.detail_error}
+                                            handleChange={this.handleChange}
+                                            handleClick={this.handleClick}
+                                            onBlurFunc={this.onBlurFunc}
+                                            passChangebt={this.passChangebt}
+                                            handlePasswordSubmit={this.handlePasswordSubmit}
+                                            flag={flag_label}
+                                        />
+                                        <div className="changepassbt">
+                                            <button type="button" onClick={this.handleChangePassword} className="changeBt btn btn-info"> BACK </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </div>
                     <div className="col-md-4">

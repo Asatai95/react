@@ -55,6 +55,19 @@ class UserUpdateImage(serializers.ModelSerializer):
         model = User
         fields = ('image',)
 
+class UserUpdatePassword(serializers.Serializer):
+    password = serializers.CharField(required=True)
+
+    class Meta:
+        model = User
+        fields = ("password",)
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data["password"])
+        instance.save()
+        print(instance)
+        return instance
+
 class CreateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False)
 

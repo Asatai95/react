@@ -52,7 +52,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import (
     TodoSerializer, UserSerializer, CreateUserSerializer, UserFilter, AccountSerializer, UserAuthentication, UserUpdateSerializer,
-    UserUpdateImage
+    UserUpdateImage, UserUpdatePassword
 )
 from django.views.decorators.csrf import csrf_exempt
 from django_filters import rest_framework as filters
@@ -353,6 +353,37 @@ class UserRegister(generics.CreateAPIView):
             return Response(serializer.data, status=201)
 
         return Response(serializer.errors, status=500)
+
+class UserUpdatePasswordInfo(generics.RetrieveUpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    authtication_classes = (JSONWebTokenAuthentication, )
+    queryset = User.objects.all()
+    serializer_class = UserUpdatePassword
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        pk = queryset.get(pk=self.request.user.pk)
+        self.check_object_permissions(self.request, pk)
+        return pk
+
+    def put(self, request, *args, **kwargs):
+        print(self.request.data)
+        passowrd = self.request.data["password"]
+        passowrd_checker = self.request.data["password_check"]
+        count = re.findall("[ぁ-んァ-ン一-龥]", passowrd)
+        count_other = re.findall("[ぁ-んァ-ン一-龥]", passowrd_checker)
+        if ( len(count) > 0 or len(count_other) > 0) :
+            return Response(data = {"status": False, "message": "日本語は使用できません"}, status=500)
+
+        if passowrd != passowrd_checker:
+            return Response(data = {"status": False, "message": "パスワード値が異なります"}, status=500)
+        user = User.objects.filter(id=self.request.user.id).first()
+        dist = self.request.data.pop("password_check")
+        serializer = UserUpdatePassword(user, {"password": dist})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.error, status=500)
 
 class UserUpdateInfo(generics.RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)

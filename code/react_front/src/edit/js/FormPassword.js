@@ -5,9 +5,9 @@ import CSRFToken from '../../csrftoken';
 export default class FormPassword extends Component {
     render(){
         return (
-            <form>
+            <form className="update_form_pass">
                 <CSRFToken />
-                <div className="row">
+                <div className="row password_update">
                     <div className="col-md-9">
                         <div className={`form-group bmd-form-group ${this.props.password !== ""? 'is-filled': ''}`} id="password_field">
                             <label className="bmd-label-floating">Password</label>
@@ -27,8 +27,11 @@ export default class FormPassword extends Component {
                             <p className="error edit_form">{this.props.password_error}</p>
                         )}
                     </div>
+                    <div className="password_view_bt">
+                        <button type="button" className="change_bt password" onClick={this.props.passChangebt}>確認</button>
+                    </div>
                 </div>
-                <div className="row">
+                <div className="row password_update">
                     <div className="col-md-9">
                         <div className={`form-group bmd-form-group ${this.props.password_check !== ""? 'is-filled': ''}`} id="password_check_field">
                             <label className="bmd-label-floating">Password Check</label>
@@ -44,17 +47,23 @@ export default class FormPassword extends Component {
                                 onBlur={this.props.onBlurFunc}
                             />
                         </div>
-                        {this.props.password_check && (
-                            <p className="error edit_form">{this.props.password_check}</p>
+                        {this.props.password_check_error && (
+                            <p className="error edit_form">{this.props.password_check_error}</p>
                         )}
                     </div>
+                    <div className="password_view_bt">
+                        <button type="button" className="change_bt password_check" onClick={this.props.passChangebt}>確認</button>
+                    </div>
                 </div>
+                {this.props.detail_error && (
+                    <p className="error edit_form">{this.props.detail_error}</p>
+                )}
                 {this.props.flag && (
                     <button
                         className="btn btn-primary pull-right"
                         type="button"
                         disabled={this.props.flag}
-                        onClick={this.props.handleSubmit}
+                        onClick={this.props.handlePasswordSubmit}
                     >ERROR</button>
                 )}
                 {!this.props.flag && (
@@ -62,11 +71,8 @@ export default class FormPassword extends Component {
                         className="btn btn-primary pull-right"
                         type="submit"
                         disabled={this.props.flag}
-                        onClick={this.props.handleSubmit}
+                        onClick={this.props.handlePasswordSubmit}
                     >Update Profile</button>
-                )}
-                {this.props.detail_error && (
-                    <p className="error edit_form">{this.props.detail_error}</p>
                 )}
                 <div className="clearfix"></div>
             </form>
