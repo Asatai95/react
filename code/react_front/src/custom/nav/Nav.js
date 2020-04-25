@@ -23,6 +23,7 @@ class Header extends Component {
         var main_block = document.getElementById("root");
         main_block.classList.add("disactive");
         if (window.location.pathname === "/logout"){
+            Cookies.remove("tab")
             Cookies.remove("myapp");
         }
         axios.get(RouteURL() + "/userinfo/", {
@@ -57,6 +58,7 @@ class Header extends Component {
                     document.getElementById('popupwin')
                 );
             }
+            Cookies.remove("tab")
             this.setState({
                 label: "Sign In",
                 url: "/login",

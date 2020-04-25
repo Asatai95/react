@@ -12,6 +12,7 @@
     "cloudinary": "^1.21.0",
     "cloudinary-react": "^1.4.0",
     "create-react-app": "^3.4.1",
+    "django-react-csrftoken": "^1.0.4",
     "js-cookie": "^2.2.1",
     "material-dashboard": "^2.1.0",
     "moment": "^2.24.0",

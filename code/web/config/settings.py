@@ -158,6 +158,10 @@ JWT_AUTH = {
     'USER_ID_CLAIM': 'user_id',
 }
 
+REST_AUTH_SERIALIZERS = {
+    'PASSWORD_RESET_SERIALIZER': 'app.serializers.PasswordResetSerializer',
+}
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',

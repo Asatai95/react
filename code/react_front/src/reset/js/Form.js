@@ -19,34 +19,37 @@ export default class Form extends React.Component {
               placeholder="Email"
               value={this.props.email}
               onChange={this.props.handleChange}
+              onBlur={this.props.onBlurFunc}
             />
           </div>
           {this.props.email_error && (
             <p className="error login_form">{this.props.email_error}</p>
           )}
         </div>
-        <div className="back_bt">
-            <button type="button" className="backBt" onClick={this.props.onBackbt}>戻る</button>
-        </div>
-        {this.props.flag && (
-          <input
-            className="button is-fullwidth is-primary is-outlined login"
-            type="submit"
-            value="ERROR"
-            disabled={this.props.flag}
-          />
-        )}
-        {!this.props.flag && (
-          <input
-            className="button is-fullwidth is-primary is-outlined login"
-            type="submit"
-            value="SUBMIT"
-            disabled={this.props.flag}
-          />
-        )}
         {this.props.detail_error && (
           <p className="error login_form">{this.props.detail_error}</p>
         )}
+        <div className="button_content">
+          <div className="back_bt">
+              <button type="button" className="backBt button is-outlined is-default" onClick={this.props.onBackbt}>戻る</button>
+          </div>
+          {this.props.flag && (
+            <input
+              className="button is-primary is-outlined login"
+              type="button"
+              value="ERROR"
+              disabled={this.props.flag}
+            />
+          )}
+          {!this.props.flag && (
+            <input
+              className="button is-primary is-outlined login"
+              type="submit"
+              value="SUBMIT"
+              disabled={this.props.flag}
+            />
+          )}
+        </div>
       </form>
     );
   }

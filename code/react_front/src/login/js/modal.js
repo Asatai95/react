@@ -16,7 +16,6 @@ class POPUPbutton extends Component {
 
     componentDidMount(){
         this.onClickShare()
-
     }
 
     render() {
@@ -31,6 +30,8 @@ class POPUPbutton extends Component {
             info = "ユーザーを本登録しました"
         } else if (this.props.info === "useredit"){
             info = "情報変更しました"
+        } else if (this.props.info === "resetpassword"){
+            info = "メールを送信しました"
         } else {
             info = "ログインしてください"
         }

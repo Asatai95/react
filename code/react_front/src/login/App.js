@@ -22,6 +22,7 @@ class Login extends Component {
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.onClickReset = this.onClickReset.bind(this)
         this.model = React.createRef()
     }
 
@@ -63,6 +64,7 @@ class Login extends Component {
     componentDidMount(){
         var main_bc = document.getElementById("wrapper");
         main_bc.classList.add("login");
+        main_bc.classList.remove("reset");
 
         const path = window.location.pathname;
         if (path === "/logout"){
@@ -151,6 +153,11 @@ class Login extends Component {
         });
     }
 
+    onClickReset(event){
+        event.preventDefault();
+        Loading("reset");
+    }
+
     render(){
 
         var flag_label = true
@@ -194,8 +201,8 @@ class Login extends Component {
                             <div className="d-flex justify-content-center links">
                                 Don't have an account?<a href="/user/create/">Sign Up</a>
                             </div>
-                            <div className="d-flex justify-content-center">
-                                <a href="/#">Forgot your password?</a>
+                            <div className="d-flex justify-content-center reset_password">
+                                <a href="/#" onClick={this.onClickReset}>Forgot your password?</a>
                             </div>
                         </div>
                     </div>

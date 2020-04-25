@@ -52,8 +52,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import (
     TodoSerializer, UserSerializer, CreateUserSerializer, UserFilter, AccountSerializer, UserAuthentication, UserUpdateSerializer,
-    UserUpdateImage, UserUpdatePassword
+    UserUpdateImage, UserUpdatePassword, PasswordResetSerializer
 )
+from django_rest_passwordreset.serializers import PasswordTokenSerializer
+from django_rest_passwordreset.models import ResetPasswordToken, clear_expired, get_password_reset_token_expiry_time, \
+    get_password_reset_lookup_field
 from django.views.decorators.csrf import csrf_exempt
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -235,7 +238,6 @@ class SearchGETAPI(generics.ListAPIView):
         if label == "search":
             if value == "":
                 table = table.filter(created_at__gte=other_value, created_at__lte=other_value_1)
-                print(table)
             else:
                 table = table.filter(title__icontains=value, created_at__gte=other_value, created_at__lte=other_value_1)
         elif label == "start":
@@ -367,7 +369,6 @@ class UserUpdatePasswordInfo(generics.RetrieveUpdateAPIView):
         return pk
 
     def put(self, request, *args, **kwargs):
-        print(self.request.data)
         passowrd = self.request.data["password"]
         passowrd_checker = self.request.data["password_check"]
         count = re.findall("[ぁ-んァ-ン一-龥]", passowrd)
@@ -441,3 +442,62 @@ class UserRegisterChecker(generic.ListView):
             return HttpResponseRedirect(redirect_to='http://localhost:3000/login?auth='+value+'')
         else:
             return HttpResponseBadRequest()
+
+class UserResetPasswordInfo(generics.GenericAPIView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = PasswordResetSerializer
+
+    def post(self, request):
+        data = request.data
+        user = User.objects.filter(email = data["email"])
+        if user.first():
+            serializer = self.get_serializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=200)
+        return Response(data={"status": False, "detail": "登録しているメールアドレスを入力してください"}, status=400)
+
+class ResetPasswordConfirm(GenericAPIView):
+    throttle_classes = ()
+    permission_classes = ()
+    serializer_class = PasswordTokenSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        password = serializer.validated_data['password']
+        token = serializer.validated_data['token']
+
+        password_reset_token_validation_time = get_password_reset_token_expiry_time()
+
+        reset_password_token = ResetPasswordToken.objects.filter(key=token).first()
+
+        if reset_password_token is None:
+            return Response({'status': 'notfound'}, status=status.HTTP_404_NOT_FOUND)
+
+        expiry_date = reset_password_token.created_at + timedelta(hours=password_reset_token_validation_time)
+
+        if timezone.now() > expiry_date:
+            reset_password_token.delete()
+            return Response({'status': 'expired'}, status=status.HTTP_404_NOT_FOUND)
+
+        if reset_password_token.user.eligible_for_reset():
+            pre_password_reset.send(sender=self.__class__, user=reset_password_token.user)
+            try:
+                validate_password(
+                    password,
+                    user=reset_password_token.user,
+                    password_validators=get_password_validators(settings.AUTH_PASSWORD_VALIDATORS)
+                )
+            except ValidationError as e:
+                raise exceptions.ValidationError({
+                    'password': e.messages
+                })
+
+            reset_password_token.user.set_password(password)
+            reset_password_token.user.save()
+            post_password_reset.send(sender=self.__class__, user=reset_password_token.user)
+
+        ResetPasswordToken.objects.filter(user=reset_password_token.user).delete()
+
+        return Response(data = {'status': True})

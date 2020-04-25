@@ -40,6 +40,8 @@ urlpatterns = [
     path("user/create/auth/<token>/", views.UserRegisterChecker.as_view(), name='checker'),
     path("user/update/", views.UserUpdateInfo.as_view(), name="update_user"),
     path("user/password/update/", views.UserUpdatePasswordInfo.as_view(), name="update_user_password"),
+    path("user/password/reset/", views.UserResetPasswordInfo.as_view(), name="updatereset"),
+    path("reset_password/<uidb64>/token/", views.UserResetPassword.as_view(), name="resetpassword"),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

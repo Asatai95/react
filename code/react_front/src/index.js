@@ -7,10 +7,9 @@ import App from './top/App';
 import Login from "./login/App";
 import Register from "./register/App";
 import Header from "./custom/nav/Nav";
-// import Dashbord from "./dashbord/App";
 import Dashtab from "./sidebar/panel/Dashbord";
-// import Usertab from "./sidebar/panel/User";
 import Edit from "./edit/App";
+import PasswordReset from "./reset/App";
 
 import * as serviceWorker from './serviceWorker';
 
@@ -25,6 +24,7 @@ const route = (
       <Route exact path="/logout" component={Login}></Route>
       <Route exact path="/edit" component={Edit}></Route>
       <Route exact path="/user/create" component={Register}></Route>
+      <Route exact path="/user/password/reset" component={PasswordReset}></Route>
       <Route exact path="/login/user/:auth" component={Login}></Route>
     </Switch>
   </Router>

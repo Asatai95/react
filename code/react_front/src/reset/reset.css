@@ -1,0 +1,101 @@
+.wrapper.reset {
+    background-image: url(https://res.cloudinary.com/db5nsevmi/image/upload/v1586436961/544750.jpg#);
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-family: 'Numans', sans-serif;
+}
+
+.wrapper.reset .sidebar {
+    display: none;
+}
+
+.wrapper.reset footer {
+    display : none;
+}
+
+.wrapper.reset form .input-group.form-group .input-group-prepend span i {
+    color:#fff;
+}
+
+.wrapper.reset form .input-group.form-group #email {
+    color :#fff;
+    font-weight :800;
+}
+
+.wrapper.reset .main-panel {
+    width : 100%;
+}
+
+.wrapper.reset .card .card-header {
+    border-bottom: 1px solid #eeeeee!important;
+}
+
+.wrapper.reset .main-panel > .content {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    min-height: calc(100vh - 80px);
+}
+
+.wrapper.reset .main-content-type .card-body {
+    height: 210px;
+}
+
+.wrapper.reset .main-content-type .card-body form {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.wrapper.reset .main-content-type .card-body form .fieldblock__login {
+    height: 120px;
+}
+
+.wrapper.reset .main-content-type .card-body form .fieldblock__login {
+    width: 100%;
+}
+
+.wrapper.reset form .button_content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.wrapper.reset form .button_content .back_bt {
+    width : 45%;
+}
+
+.wrapper.reset form .button_content .back_bt button {
+    width :100%;
+    border: none;
+    background-color: transparent;
+    border:1px solid #fff;
+    color: #fff;
+    transition:.5s;
+}
+
+.wrapper.reset form .button_content .back_bt button:hover {
+    color : #222;
+    background:#fff;
+    font-weight: 800;
+}
+
+.wrapper.reset form .button_content input {
+    width: 45%;
+}
+
+.wrapper.reset .card-footer {
+    justify-content: center;
+}
+
+.button.is-primary.is-outlined.login:disabled {
+    background: rgb(255,0,0);
+    font-weight: 800;
+    border-color: rgb(255,0,0);
+    color: #fff;
+    font-weight: 800;
+    margin: 20px 0;
+}

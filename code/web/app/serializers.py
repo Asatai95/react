@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from django.contrib.auth.forms import PasswordResetForm
+from django.conf import settings
 from .models import Todo, User
 from django.contrib.auth import get_user_model
 from django_filters.rest_framework import DjangoFilterBackend
@@ -8,6 +10,8 @@ from django.core import exceptions
 import django.contrib.auth.password_validation as validators
 from rest_framework.validators import UniqueValidator
 import requests
+from rest_framework.exceptions import ValidationError
+from django.contrib.sites.shortcuts import get_current_site
 
 Get_user = get_user_model()
 
@@ -112,3 +116,40 @@ class AccountSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(request_data=validated_data)
+
+class PasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password_reset_form_class = PasswordResetForm
+
+    def get_email_options(self):
+        request = self.context.get('request')
+        current_site = get_current_site(request)
+        # domain = request.scheme +"://"+ current_site.domain
+        domain = request.scheme +"://localhost:3000"
+        email_context = {
+            'front_password_reset_url': domain + "/reset_password/"
+        }
+        data = {
+            'email_template_name': 'email/password_reset.txt',
+            'subject_template_name': 'email/password_reset_subject.txt',
+            'extra_email_context': email_context,
+        }
+        return data
+
+    def validate_email(self, value):
+        self.reset_form = self.password_reset_form_class(data=self.initial_data)
+        if not self.reset_form.is_valid():
+            raise serializers.ValidationError(self.reset_form.errors)
+        return value
+
+    def save(self):
+        request = self.context.get('request')
+        opts = {
+            'use_https': request.is_secure(),
+            'from_email': getattr(settings, 'DEFAULT_FROM_EMAIL'),
+            'request': request,
+        }
+
+        opts.update(self.get_email_options())
+        self.reset_form.save(**opts)
+

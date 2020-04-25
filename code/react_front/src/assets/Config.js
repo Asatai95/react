@@ -1,8 +1,12 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import NotFound from '../404'
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import PasswordReset from "../reset/App";
+import Login from "../login/App";
+import POPUPbutton from "../login/js/modal";
 
 export const Router = () => (
     <BrowserRouter>
@@ -94,6 +98,33 @@ export const Loading = (info) => {
             window.location.href = "/login";
         } else if (info === "userauth") {
             window.location.href = "/"
+        } else if (info === "reset_bt"){
+            obj.classList.remove("active");
+            const block = document.getElementById("loading");
+            const broccoli = block.lastElementChild;
+            block.removeChild(broccoli);
+            window.history.replaceState('','','/login');
+            ReactDOM.render(<Login />, document.getElementById('root'));
+        } else if (info === "reset"){
+            obj.classList.remove("active");
+            const block = document.getElementById("loading");
+            const broccoli = block.lastElementChild;
+            block.removeChild(broccoli);
+            const pathname = window.location.pathname;
+            if (pathname === "/user/password/reset/" || pathname === "/user/password/reset"){
+                window.history.replaceState('','','/login');
+                ReactDOM.render(<Login />, document.getElementById('root'));
+                const obj = document.getElementById('popupwin')
+                obj.classList.add("popupwin_active");
+                ReactDOM.render(<POPUPbutton
+                    info="resetpassword"
+                />, obj);
+            } else if (pathname === "/login" || pathname === "/login/"){
+                window.history.replaceState('','','/user/password/reset/');
+                ReactDOM.render(<PasswordReset />, document.getElementById('root'));
+            } else {
+                window.location.href = "/login";
+            }
         } else {
           obj.classList.remove("active");
           const block = document.getElementById("loading");
