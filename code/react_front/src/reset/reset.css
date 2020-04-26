@@ -99,3 +99,52 @@
     font-weight: 800;
     margin: 20px 0;
 }
+
+/* 新しいパスワード入力フォーム */
+
+.main-content-type.reset_password_form form .fieldblock__password_reset input {
+    font-weight: 800;
+    color: #fff;
+}
+
+.wrapper.reset .main-content-type.reset_password_form .card-body {
+    height: 100%;
+}
+
+.main-content-type.reset_password_form form .fieldblock__password_reset {
+    width: 100%;
+    margin: 20px 0;
+}
+
+.main-content-type.reset_password_form form .fieldblock__password_reset .input-group.form-group {
+    margin: 10px 0 0 ;
+}
+
+.main-content-type.reset_password_form form .fieldblock__password_reset .input-group.form-group span.change_bt {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-left: 15px;
+    cursor: pointer;
+}
+
+.main-content-type.reset_password_form form .fieldblock__password_reset .input-group.form-group span.change_bt:hover {
+    font-weight: 800;
+}
+
+.main-content-type.reset_password_form form .fieldblock__password_reset .error {
+    margin: 0;
+}
+
+.main-content-type.reset_password_form form .password_reset_form.button {
+    width: 85%;
+    transition: .6s;
+    margin: 0;
+}
+
+.main-content-type.reset_password_form form .button.is-fullwidth.is-primary.is-outlined.login:disabled {
+    margin: 0;
+}

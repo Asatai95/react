@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email, EmailValidator, FileExtensionValidator, MaxValueValidator, MinValueValidator, RegexValidator
 from django.contrib.auth.validators import ASCIIUsernameValidator
 from django.core.mail import send_mail
+from django.contrib.auth import get_user_model
 
 import os
 import re
@@ -21,6 +22,10 @@ from django.dispatch import receiver
 
 from django.core.management.base import BaseCommand
 
+from django_rest_passwordreset.tokens import get_token_generator
+TOKEN_GENERATOR_CLASS = get_token_generator()
+
+AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'User')
 SILENCED_SYSTEM_CHECKS = ["auth.W004"]
 
 class UserManager(BaseUserManager):

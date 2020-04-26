@@ -23,7 +23,7 @@ const passwordValidation = (password: string): string => {
   if (reg_pass === false) return "パスワードは全角を使用できません";
   if (password.length <= 8 && password.length >= 16 ) return 'パスワードは8文字以上16文字以下で入力してください';
   var reg = new RegExp(/[!"#$%&'()*+\-.,:;<=>?@[\\\]^_`{|}~]/g);
-  if (!/[A-Z]/.test(password) || !reg.test(password)) return "最低でも大文字と記号を一文字以上を使用してください"
+  if (!/[A-Z]/.test(password) || !reg.test(password)) return "大文字と記号を一文字以上を使用してください"
   var wPat  = "[\u3041-\u3093]";
   wPat += "|[\u30A1-\u30F6]";
   wPat += "|[\u4E00-\u9FFF]";
@@ -43,7 +43,7 @@ const passwordcheckValidation = (password_check: string): string => {
   if (reg_pass === false) return "パスワードは全角を使用できません";
   if (password_check.length <= 8 && password_check.length >= 16 ) return 'パスワードは8文字以上16文字以下で入力してください';
   var reg = new RegExp(/[!"#$%&'()*+\-.,:;<=>?@[\\\]^_`{|}~]/g);
-  if (!/[A-Z]/.test(password_check) || !reg.test(password_check)) return "最低でも大文字と記号を一文字以上を使用してください";
+  if (!/[A-Z]/.test(password_check) || !reg.test(password_check)) return "大文字と記号を一文字以上を使用してください";
   var wPat  = "[\u3041-\u3093]";
   wPat += "|[\u30A1-\u30F6]";
   wPat += "|[\u4E00-\u9FFF]";

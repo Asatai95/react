@@ -10,6 +10,7 @@ import Header from "./custom/nav/Nav";
 import Dashtab from "./sidebar/panel/Dashbord";
 import Edit from "./edit/App";
 import PasswordReset from "./reset/App";
+import PasswordResetForm from "./reset/ResetForm";
 
 import * as serviceWorker from './serviceWorker';
 
@@ -25,6 +26,7 @@ const route = (
       <Route exact path="/edit" component={Edit}></Route>
       <Route exact path="/user/create" component={Register}></Route>
       <Route exact path="/user/password/reset" component={PasswordReset}></Route>
+      <Route exact path="/reset_password/:uid64/:token" component={PasswordResetForm}></Route>
       <Route exact path="/login/user/:auth" component={Login}></Route>
     </Switch>
   </Router>

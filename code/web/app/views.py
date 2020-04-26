@@ -45,7 +45,7 @@ from .config.view_auth import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from rest_framework import routers, viewsets, generics, serializers, authentication, permissions
+from rest_framework import routers, viewsets, generics, serializers, authentication, permissions, status
 from rest_framework import filters as rest_filters
 from .config.auth import IsAuthenticated
 from rest_framework.response import Response
@@ -54,7 +54,7 @@ from .serializers import (
     TodoSerializer, UserSerializer, CreateUserSerializer, UserFilter, AccountSerializer, UserAuthentication, UserUpdateSerializer,
     UserUpdateImage, UserUpdatePassword, PasswordResetSerializer
 )
-from django_rest_passwordreset.serializers import PasswordTokenSerializer
+from django_rest_passwordreset.serializers import PasswordTokenSerializer, TokenSerializer
 from django_rest_passwordreset.models import ResetPasswordToken, clear_expired, get_password_reset_token_expiry_time, \
     get_password_reset_lookup_field
 from django.views.decorators.csrf import csrf_exempt
@@ -457,7 +457,33 @@ class UserResetPasswordInfo(generics.GenericAPIView):
                 return Response(serializer.data, status=200)
         return Response(data={"status": False, "detail": "登録しているメールアドレスを入力してください"}, status=400)
 
-class ResetPasswordConfirm(GenericAPIView):
+class ResetPasswordValidateToken(generics.GenericAPIView):
+    throttle_classes = ()
+    permission_classes = ()
+    serializer_class = TokenSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        token = serializer.validated_data['token']
+        print("token")
+        print(token)
+        password_reset_token_validation_time = get_password_reset_token_expiry_time()
+
+        reset_password_token = ResetPasswordToken.objects.filter(key=token).first()
+        print(reset_password_token)
+        if reset_password_token is None:
+            return Response({'status': 'notfound'}, status=status.HTTP_404_NOT_FOUND)
+
+        expiry_date = reset_password_token.created_at + timedelta(hours=password_reset_token_validation_time)
+
+        if timezone.now() > expiry_date:
+            reset_password_token.delete()
+            return Response({'status': 'expired'}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(data={'status': True}, status=200)
+
+class ResetPasswordConfirm(generics.GenericAPIView):
     throttle_classes = ()
     permission_classes = ()
     serializer_class = PasswordTokenSerializer
