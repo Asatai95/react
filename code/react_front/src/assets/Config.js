@@ -17,6 +17,7 @@ export const Router = () => (
 );
 
 export const RouteURL = () => "http://localhost:3031";
+export const RouteAUTHURL = () => "http://localhost:3031/api/login";
 
 export const header = {
   'Access-Control-Allow-Origin': 'http://localhost:3031',

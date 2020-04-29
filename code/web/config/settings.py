@@ -34,6 +34,15 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'django_rest_passwordreset',
+    'social_django',
+    'rest_social_auth',
+    'rest_auth',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
 ]
 
 MIDDLEWARE = [
@@ -132,21 +141,41 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_USER_MODEL = 'app.User'
+CSRF_COOKIE_NAME = "myapptodo"
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_NAME = "myapptodo"
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_AGE = 3600 * 24 * 30 * 365 #1年単位
+SESSION_COOKIE_AGE = 3600 * 24 * 30 * 365
+
+CORS_ORIGIN_WHITELIST = (
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+)
+
+SOCIAL_AUTH_FACEBOOK_KEY = '159779238790256'
+SOCIAL_AUTH_FACEBOOK_SECRET = '12bf3a9fb1ac4a08bceaae1156aa3884'
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {'fields': 'id, name, email' }
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', ]
+FACEBOOK_EXTENDED_PERMISSIONS = ['email']
+SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']
+SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+REST_SOCIAL_OAUTH_REDIRECT_URI = "/"
+REST_SOCIAL_DOMAIN_FROM_ORIGIN = True
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.facebook.FacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
 
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
     "http://127.0.0.1:3000"
 )
-
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = True
 
 JWT_AUTH = {
     'AUTH_HEADER_TYPES': "JWT",

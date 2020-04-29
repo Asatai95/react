@@ -148,3 +148,11 @@
 .main-content-type.reset_password_form form .button.is-fullwidth.is-primary.is-outlined.login:disabled {
     margin: 0;
 }
+
+.d-flex.justify-content-center.send_email.reset_password {
+    color: #fff;
+}
+
+.d-flex.justify-content-center.send_email.reset_password a {
+    margin-left: 5px;
+}

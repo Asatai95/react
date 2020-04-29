@@ -17,6 +17,7 @@ urlpatterns = [
     path('', include('app.urls')),
     path('', include('app.urls', namespace="apps")),
     path('register/', include('app.urls', namespace="register")),
+    path('api/login/', include('rest_social_auth.urls_session')),
     # url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     url(r'^static/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT})
 ]

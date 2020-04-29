@@ -7,6 +7,7 @@ import axios from 'axios';
 import Validation from '../Validation';
 import {header, RouteURL, ClassContainer} from "../assets/Config";
 import Cookies from 'js-cookie';
+import AuthLogin from '../auth/App';
 
 class Register extends Component {
     constructor(props) {
@@ -284,11 +285,7 @@ class Register extends Component {
                     <div className="card register">
                         <div className="card-header">
                             <h3>Sign Up</h3>
-                            <div id="sns" className="d-flex justify-content-end social_icon">
-                                <span><i className="fab fa-facebook-square"></i></span>
-                                <span><i className="fab fa-google-plus-square"></i></span>
-                                <span><i className="fab fa-twitter-square"></i></span>
-                            </div>
+                            <AuthLogin />
                         </div>
                         <div className="card-body">
                             {this.state.flag_ch === false && (

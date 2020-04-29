@@ -44,12 +44,12 @@ class Header extends Component {
         })
         .catch((error) => {
             var path = window.location.pathname ;
-            console.log(path)
             if (path.indexOf("user") < 0 && path !== "/login" && path !== "/login/" && path !== "/logout" && path !== "/logout/" && path.indexOf("reset") < 0 ){
                 Cookies.remove("tab")
                 Loading("login");
             }
             const label = Cookies.get("login");
+            console.log(label)
             if (label === "login"){
                 Cookies.remove("login")
                 ReactDOM.render(

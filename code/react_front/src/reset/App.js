@@ -5,6 +5,7 @@ import Form from "./js/Form";
 import axios from 'axios';
 import Validation from '../Validation';
 import { header, RouteURL, ClassContainer, Loading } from "../assets/Config";
+import AuthLogin from '../auth/App';
 
 class PasswordReset extends Component {
     constructor(props) {
@@ -121,11 +122,7 @@ class PasswordReset extends Component {
                     <div className="card login_content">
                         <div className="card-header">
                             <h3>Reset Password</h3>
-                            <div className="d-flex justify-content-end social_icon">
-                                <span><i className="fab fa-facebook-square"></i></span>
-                                <span><i className="fab fa-google-plus-square"></i></span>
-                                <span><i className="fab fa-twitter-square"></i></span>
-                            </div>
+                            <AuthLogin />
                         </div>
                         <div className="card-body">
                             <Form
@@ -142,6 +139,9 @@ class PasswordReset extends Component {
                         <div className="card-footer">
                             <div className="d-flex justify-content-center links">
                                 Don't have an account?<a href="/user/create/">Sign Up</a>
+                            </div>
+                            <div className="d-flex justify-content-center send_email reset_password">
+                                Do you have an account? <a href="/login/" onClick={this.onClickReset}> Sign In</a>
                             </div>
                         </div>
                     </div>

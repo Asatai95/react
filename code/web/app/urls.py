@@ -43,6 +43,7 @@ urlpatterns = [
     path("user/password/reset/", views.UserResetPasswordInfo.as_view(), name="updatereset"),
     path("reset_password/token/", views.ResetPasswordValidateToken.as_view(), name="resetpasswordtoken"),
     path("reset_password/<uidb64>/<token>/", views.ResetPasswordConfirm.as_view(), name="resetpassword"),
+    path("api/login/social/session/", views.SocialSessionAuthView.as_view(), name="sns_facebook"),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

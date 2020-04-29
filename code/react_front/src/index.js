@@ -28,6 +28,7 @@ const route = (
       <Route exact path="/user/password/reset" component={PasswordReset}></Route>
       <Route exact path="/reset_password/:uid64/:token" component={PasswordResetForm}></Route>
       <Route exact path="/login/user/:auth" component={Login}></Route>
+      <Route exact path="/users/auth/facebook/:code" component={Login}></Route>
     </Switch>
   </Router>
 );

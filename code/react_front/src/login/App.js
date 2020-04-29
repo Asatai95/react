@@ -7,6 +7,8 @@ import axios from 'axios';
 import Validation from '../Validation';
 import {header, RouteURL, ClassContainer, UserAuth, Loading} from "../assets/Config";
 import Cookies from 'js-cookie';
+import AuthLogin from '../auth/App';
+import {facebookReqToken} from "../auth/js/Facebook";
 
 class Login extends Component {
     constructor(props) {
@@ -105,14 +107,8 @@ class Login extends Component {
                 }
             }
         }
-        if (Cookies.get("username") !== undefined){
-            Cookies.remove("username")
-            Cookies.remove("password")
-            Cookies.remove("email")
-            obj.classList.add("popupwin_active");
-            ReactDOM.render(<POPUPbutton
-                info="preuser"
-                />, document.getElementById('popupwin'));
+        if (Cookies.get("authToken") === "facebook"){
+            facebookReqToken("login")
         } else if (Cookies.get("auth")){
             if (Cookies.get("auth")){
                 Cookies.remove("auth")
@@ -120,6 +116,14 @@ class Login extends Component {
             obj.classList.add("popupwin_active");
             ReactDOM.render(<POPUPbutton
                 info="authuser"
+                />, document.getElementById('popupwin'));
+        } else if (Cookies.get("username") !== undefined){
+            Cookies.remove("username")
+            Cookies.remove("password")
+            Cookies.remove("email")
+            obj.classList.add("popupwin_active");
+            ReactDOM.render(<POPUPbutton
+                info="preuser"
                 />, document.getElementById('popupwin'));
         }
     }
@@ -179,11 +183,7 @@ class Login extends Component {
                     <div className="card login_content">
                         <div className="card-header">
                             <h3>Sign In</h3>
-                            <div className="d-flex justify-content-end social_icon">
-                                <span><i className="fab fa-facebook-square"></i></span>
-                                <span><i className="fab fa-google-plus-square"></i></span>
-                                <span><i className="fab fa-twitter-square"></i></span>
-                            </div>
+                            <AuthLogin />
                         </div>
                         <div className="card-body">
                             <Form

@@ -55,6 +55,15 @@ ul li {
   list-style: none;
 }
 
+.social_icon span a {
+  color : #FFC312;
+}
+
+.social_icon span a:hover {
+  color: white;
+  cursor: pointer;
+}
+
 /* -------------------------------リセットcss--------------------------------------- */
 
 /* リローディング */

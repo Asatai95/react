@@ -52,7 +52,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import (
     TodoSerializer, UserSerializer, CreateUserSerializer, UserFilter, AccountSerializer, UserAuthentication, UserUpdateSerializer,
-    UserUpdateImage, UserUpdatePassword, PasswordResetSerializer
+    UserUpdateImage, UserUpdatePassword, PasswordResetSerializer, MyUserSerializer
 )
 from django_rest_passwordreset.serializers import PasswordTokenSerializer, TokenSerializer
 from django_rest_passwordreset.models import ResetPasswordToken, clear_expired, get_password_reset_token_expiry_time, \
@@ -61,6 +61,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import AuthenticationFailed
+from rest_social_auth.views import BaseSocialAuthView
+from rest_social_auth.serializers import TokenSerializer as tokenSerializer, UserTokenSerializer
+from rest_framework.authentication import TokenAuthentication
+from social_django.views import _do_login as social_auth_login
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
+
 
 from django.contrib.sessions.models import Session
 from django.contrib.auth import get_user_model
@@ -453,6 +460,7 @@ class UserResetPasswordInfo(generics.GenericAPIView):
         if user.first():
             serializer = self.get_serializer(data=data)
             if serializer.is_valid():
+                print(serializer.data)
                 serializer.save()
                 return Response(serializer.data, status=200)
         return Response(data={"status": False, "detail": "登録しているメールアドレスを入力してください"}, status=400)
@@ -527,3 +535,40 @@ class ResetPasswordConfirm(generics.GenericAPIView):
         ResetPasswordToken.objects.filter(user=reset_password_token.user).delete()
 
         return Response(data = {'status': True})
+
+# class FacebookLogin(generics.GenericAPIView):
+# class FacebookLogin(APIView):
+#     authentication_classes = (SessionAuthentication, BasicAuthentication,)
+#     permission_classes = (IsAuthenticated, )
+
+#     @csrf_exempt
+#     def post(self, request, format=None):
+#         print(request.auth)
+#         print(request.user)
+#         content = {
+#             'user': unicode(request.user),
+#             'auth': unicode(request.auth),
+#         }
+#         return Response(content)
+
+class SocialSessionAuthView(BaseSocialAuthView):
+    serializer_class = MyUserSerializer
+
+    @csrf_exempt
+    def do_login(self, backend, user):
+        print(user)
+        social_auth_login(backend, user, user.social_user)
+
+    @csrf_exempt
+    def post(self, request, *args, **kwargs):
+        print(kwargs)
+        return super(SocialSessionAuthView, self).post(request, *args, **kwargs)
+
+# class SocialSessionAuthView(BaseSocialAuthView):
+#     serializer_class = tokenSerializer
+#     authentication_classes = (TokenAuthentication, )
+
+
+# class SocialSessionAuthView(BaseSocialAuthView):
+#     serializer_class = UserTokenSerializer
+#     authentication_classes = (TokenAuthentication, )

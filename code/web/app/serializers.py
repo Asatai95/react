@@ -153,3 +153,11 @@ class PasswordResetSerializer(serializers.Serializer):
         opts.update(self.get_email_options())
         self.reset_form.save(**opts)
 
+class MyUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = get_user_model()
+        exclude = (
+            'is_staff', 'is_active', 'date_joined', 'password', 'last_login', 'user_permissions',
+            'groups', 'is_superuser',
+        )
