@@ -8,14 +8,15 @@ import app.views
 
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.decorators.csrf import csrf_exempt
 
 from django.views.static import serve
 
 # from app.urls import router
 
 urlpatterns = [
-    path('', include('app.urls')),
-    path('', include('app.urls', namespace="apps")),
+    path('', csrf_exempt(include('app.urls'))),
+    path('', csrf_exempt(include('app.urls', namespace="apps"))),
     path('register/', include('app.urls', namespace="register")),
     path('api/login/', include('rest_social_auth.urls_session')),
     # url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),

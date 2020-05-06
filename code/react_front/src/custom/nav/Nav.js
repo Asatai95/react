@@ -4,6 +4,7 @@ import {RouteURL, Loading, RefreshToken} from "../../assets/Config";
 import Cookies from 'js-cookie';
 import POPUPbutton from "../../login/js/modal";
 import ReactDOM from 'react-dom';
+import DjangoCSRFToken from 'django-react-csrftoken'
 // import UserAuthButton from "../../logout/App";
 
 class Header extends Component {
@@ -20,6 +21,7 @@ class Header extends Component {
     }
 
     componentDidMount() {
+        console.log(DjangoCSRFToken)
         var main_block = document.getElementById("root");
         main_block.classList.add("disactive");
         if (window.location.pathname === "/logout"){
@@ -77,6 +79,7 @@ class Header extends Component {
     render(){
         return(
             <div className="navbar-brand container-fluid">
+                <DjangoCSRFToken/>
                 <button className="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="sr-only">Toggle navigation</span>
                     <span className="navbar-toggler-icon icon-bar"></span>

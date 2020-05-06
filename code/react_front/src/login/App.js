@@ -108,7 +108,11 @@ class Login extends Component {
             }
         }
         if (Cookies.get("authToken") === "facebook"){
-            facebookReqToken("login")
+            if (Cookies.get("accessToken") === "facebook_access"){
+                facebookReqToken("access")
+            } else {
+                facebookReqToken("login")
+            }
         } else if (Cookies.get("auth")){
             if (Cookies.get("auth")){
                 Cookies.remove("auth")

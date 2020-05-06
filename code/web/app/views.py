@@ -54,6 +54,10 @@ from .serializers import (
     TodoSerializer, UserSerializer, CreateUserSerializer, UserFilter, AccountSerializer, UserAuthentication, UserUpdateSerializer,
     UserUpdateImage, UserUpdatePassword, PasswordResetSerializer, MyUserSerializer
 )
+from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+from rest_auth.registration.views import SocialLoginView
+import json
+
 from django_rest_passwordreset.serializers import PasswordTokenSerializer, TokenSerializer
 from django_rest_passwordreset.models import ResetPasswordToken, clear_expired, get_password_reset_token_expiry_time, \
     get_password_reset_lookup_field
@@ -67,7 +71,12 @@ from rest_framework.authentication import TokenAuthentication
 from social_django.views import _do_login as social_auth_login
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
-
+from rest_framework_social_oauth2.authentication import SocialAuthentication
+from rest_framework_social_oauth2.views import TokenView, ConvertTokenView
+from rest_framework_social_oauth2.oauth2_backends import KeepRequestCore
+from rest_framework_social_oauth2.oauth2_endpoints import SocialTokenServer
+from oauth2_provider.settings import oauth2_settings
+from oauth2_provider.views.mixins import OAuthLibMixin
 
 from django.contrib.sessions.models import Session
 from django.contrib.auth import get_user_model
@@ -536,39 +545,34 @@ class ResetPasswordConfirm(generics.GenericAPIView):
 
         return Response(data = {'status': True})
 
-# class FacebookLogin(generics.GenericAPIView):
-# class FacebookLogin(APIView):
-#     authentication_classes = (SessionAuthentication, BasicAuthentication,)
-#     permission_classes = (IsAuthenticated, )
+class CsrfExemptMixin(object):
 
-#     @csrf_exempt
-#     def post(self, request, format=None):
-#         print(request.auth)
-#         print(request.user)
-#         content = {
-#             'user': unicode(request.user),
-#             'auth': unicode(request.auth),
-#         }
-#         return Response(content)
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(CsrfExemptMixin, self).dispatch(*args, **kwargs)
 
-class SocialSessionAuthView(BaseSocialAuthView):
-    serializer_class = MyUserSerializer
+class SocialSessionFacebook(CsrfExemptMixin, OAuthLibMixin, APIView):
+    server_class = SocialTokenServer
+    permission_classes = (permissions.AllowAny,)
+    validator_class = oauth2_settings.OAUTH2_VALIDATOR_CLASS
+    oauthlib_backend_class = KeepRequestCore
+    serializer_class = SocialAuthentication
 
     @csrf_exempt
-    def do_login(self, backend, user):
-        print(user)
-        social_auth_login(backend, user, user.social_user)
+    def post(self, request, format=None):
+        mutable_data = request.data.copy()
+        request._request.POST = request._request.POST.copy()
 
-    @csrf_exempt
-    def post(self, request, *args, **kwargs):
-        print(kwargs)
-        return super(SocialSessionAuthView, self).post(request, *args, **kwargs)
+        print(mutable_data.items())
+        for key, value in mutable_data.items():
+            request._request.POST[key] = value
 
-# class SocialSessionAuthView(BaseSocialAuthView):
-#     serializer_class = tokenSerializer
-#     authentication_classes = (TokenAuthentication, )
-
-
-# class SocialSessionAuthView(BaseSocialAuthView):
-#     serializer_class = UserTokenSerializer
-#     authentication_classes = (TokenAuthentication, )
+        url, headers, body, status = self.create_token_response(request._request)
+        print(request._request)
+        response = Response(data=json.loads(body), status=status)
+        print("response")
+        print(response)
+        for k, v in headers.items():
+            response[k] = v
+        print(response)
+        return response

@@ -34,7 +34,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'django_rest_passwordreset',
+    'oauth2_provider',
     'social_django',
+    'rest_framework_social_oauth2',
     'rest_social_auth',
     'rest_auth',
     'django.contrib.sites',
@@ -62,7 +64,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "templates")],
+        'DIRS': ["/var/www/react/react_front/public"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -72,6 +74,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.static',
                 'app.templatetags.context_processors.common',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -156,26 +160,21 @@ CORS_ORIGIN_WHITELIST = (
         'http://127.0.0.1:3000',
 )
 
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.facebook.FacebookAppOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'rest_framework_social_oauth2.backends.DjangoOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
 SOCIAL_AUTH_FACEBOOK_KEY = '159779238790256'
 SOCIAL_AUTH_FACEBOOK_SECRET = '12bf3a9fb1ac4a08bceaae1156aa3884'
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {'fields': 'id, name, email' }
-SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', ]
-FACEBOOK_EXTENDED_PERMISSIONS = ['email']
-SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']
-SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {'locale': 'ru_RU'}
+
 REST_SOCIAL_OAUTH_REDIRECT_URI = "/"
 REST_SOCIAL_DOMAIN_FROM_ORIGIN = True
-
-AUTHENTICATION_BACKENDS = (
-    'social_core.backends.facebook.FacebookOAuth2',
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-)
-
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
-    "http://127.0.0.1:3000"
-)
 
 JWT_AUTH = {
     'AUTH_HEADER_TYPES': "JWT",
@@ -200,8 +199,14 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'rest_framework_social_oauth2.authentication.SocialAuthentication',
     ),
     'NON_FIELD_ERRORS_KEY': 'detail',
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+}
+OAUTH2_PROVIDER = {
+    'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore',
 }

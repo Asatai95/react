@@ -5,6 +5,7 @@ import sys
 from django.urls import path, include, re_path, register_converter
 from django.conf.urls import url
 from . import views
+from oauth2_provider.views import AuthorizationView
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -13,6 +14,7 @@ from .url_config.url_config import *
 from rest_framework import routers
 from django.views.decorators.cache import cache_page
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
+from django.views.decorators.csrf import csrf_exempt
 
 app_name = 'web.app'
 register_converter(FourDigitYearConverter, "pk")
@@ -43,7 +45,8 @@ urlpatterns = [
     path("user/password/reset/", views.UserResetPasswordInfo.as_view(), name="updatereset"),
     path("reset_password/token/", views.ResetPasswordValidateToken.as_view(), name="resetpasswordtoken"),
     path("reset_password/<uidb64>/<token>/", views.ResetPasswordConfirm.as_view(), name="resetpassword"),
-    path("api/login/social/session/", views.SocialSessionAuthView.as_view(), name="sns_facebook"),
+    path("authorize/", AuthorizationView.as_view(), name="authorize"),
+    path("api/login/social/session/", csrf_exempt(views.SocialSessionFacebook.as_view()), name="facebookapi"),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
