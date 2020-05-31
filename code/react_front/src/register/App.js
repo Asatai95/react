@@ -316,8 +316,7 @@ class Register extends Component {
                                     checkALL={this.checkALL}
                                 />
                             )}
-                        </div>
-                    </div>
+                        </div>                    </div>
                 </div>
             </div>
         );

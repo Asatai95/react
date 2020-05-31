@@ -8,7 +8,7 @@ import Validation from '../Validation';
 import {header, RouteURL, ClassContainer, UserAuth, Loading} from "../assets/Config";
 import Cookies from 'js-cookie';
 import AuthLogin from '../auth/App';
-import {facebookReqToken} from "../auth/js/Facebook";
+import facebookReqToken from "../auth/js/Facebook";
 
 class Login extends Component {
     constructor(props) {

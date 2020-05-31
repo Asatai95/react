@@ -77,6 +77,7 @@ from rest_framework_social_oauth2.oauth2_backends import KeepRequestCore
 from rest_framework_social_oauth2.oauth2_endpoints import SocialTokenServer
 from oauth2_provider.settings import oauth2_settings
 from oauth2_provider.views.mixins import OAuthLibMixin
+from facebook_auth.urls import redirect_uri
 
 from django.contrib.sessions.models import Session
 from django.contrib.auth import get_user_model
@@ -550,6 +551,15 @@ class CsrfExemptMixin(object):
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(CsrfExemptMixin, self).dispatch(*args, **kwargs)
+
+def FacebookAuth(request):
+    if request.method == "GET":
+        d = {
+            'redirect_uri': redirect_uri('/login/success', '/login/fail'),
+            'client_id': settings.FACEBOOK_APP_ID,
+            'scope': 'email'
+        }
+        return JsonResponse(data = d, status=201)
 
 class SocialSessionFacebook(CsrfExemptMixin, OAuthLibMixin, APIView):
     server_class = SocialTokenServer

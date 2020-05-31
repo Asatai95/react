@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app.apps.WebappConfig',
     'app.templatetags',
+    'facebook_auth',
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
@@ -53,7 +54,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -145,7 +146,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_USER_MODEL = 'app.User'
-CSRF_COOKIE_NAME = "myapptodo"
+CSRF_COOKIE_NAME = "csrftoken"
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
@@ -165,7 +166,13 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.facebook.FacebookOAuth2',
     'rest_framework_social_oauth2.backends.DjangoOAuth2',
     'django.contrib.auth.backends.ModelBackend',
+    'facebook_auth.backends.FacebookBackend',
+    'facebook_auth.backends.FacebookJavascriptBackend',
 )
+
+FACEBOOK_CANVAS_URL = 'http://localhost:3000/'
+FACEBOOK_APP_ID = '159779238790256'
+FACEBOOK_APP_SECRET = '12bf3a9fb1ac4a08bceaae1156aa3884'
 
 SOCIAL_AUTH_FACEBOOK_KEY = '159779238790256'
 SOCIAL_AUTH_FACEBOOK_SECRET = '12bf3a9fb1ac4a08bceaae1156aa3884'

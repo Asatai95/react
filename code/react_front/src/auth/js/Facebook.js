@@ -1,44 +1,21 @@
 import axios from "axios";
 import Cookies from 'js-cookie';
 import { RouteAUTHURL, RouteURL, header } from "../../assets/Config";
+// import Cookies from 'universal-cookie';
+// import cookie from "react-cookies";
 // import DjangoCSRFToken from 'django-react-csrftoken'
 
-const param_item = (name, url) => {
-    if (!url) url = window.location.href;
-    name = name.replace(/[[]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
-}
-
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
+function facebookReqToken(info){
+    const param_item = (name, url) => {
+        if (!url) url = window.location.href;
+        name = name.replace(/[[]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
-    return cookieValue;
-}
 
-// var token = () => {
-//     const item = document.getElementsByTagName("csrfmiddlewaretoken")
-//     console.log(item)
-//     if(item.value !== ""){
-//         console.log(item.value)
-//     }
-// }
-
-// setInterval(token, 500);
-
-export const facebookReqToken = (info) => {
     if (info === "gettoken"){
         const item = document.querySelector('[name=csrfmiddlewaretoken]').value;
         console.log(item)
@@ -56,15 +33,11 @@ export const facebookReqToken = (info) => {
                 "code": response.data.access_token
             }
             console.log(conf)
-            // const item = document.getElementsByTagName("csrfmiddlewaretoken").value
-            // console.log(item)
-            // Cookies.set("csrftoken", "Bp9cKaAqVGWWGGFdnyqIM0A6Z23KqkmtmKemrHDTDvGpnEMMHvEVxG0ILDlemcsf")
-            // var csrftoken = getCookie('csrfmiddlewaretoken');
-            // console.log("csrftoken")
-            // console.log(conf)
-            axios.defaults.xsrfCookieName = 'csrfmiddlewaretoken';
+            axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = "X-CSRFToken";
             axios.defaults.withCredentials = true
+            console.log("axios")
+            console.log(axios.defaults)
             axios.post(RouteAUTHURL() + "/social/session/", conf)
             .then((response) => {
                 console.log("response")
@@ -75,7 +48,6 @@ export const facebookReqToken = (info) => {
                 console.log(error.response.data)
             })
         })
-        // window.location.href = ""
     }
     if (info === "access"){
         // const param = param_item("code");
@@ -99,4 +71,6 @@ export const facebookReqToken = (info) => {
         //     console.log(error.response)
         // })
     }
-};
+}
+
+export default facebookReqToken;

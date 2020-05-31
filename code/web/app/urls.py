@@ -47,6 +47,7 @@ urlpatterns = [
     path("reset_password/<uidb64>/<token>/", views.ResetPasswordConfirm.as_view(), name="resetpassword"),
     path("authorize/", AuthorizationView.as_view(), name="authorize"),
     path("api/login/social/session/", csrf_exempt(views.SocialSessionFacebook.as_view()), name="facebookapi"),
+    path("facebook/auth/", views.FacebookAuth.as_view(), name="facebookauth"),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
