@@ -75,7 +75,7 @@ pbr==5.1.1
 Pillow==5.3.0
 pip-review==1.0
 pox==0.2.7
-protobuf==3.11.3
+protobuf==3.18.3
 psycopg2==2.7.4
 psycopg2-binary==2.8.4
 pyasn1==0.4.4
